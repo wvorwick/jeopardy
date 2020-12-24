@@ -1,0 +1,51 @@
+<div id="teams_section">
+	<div id="current_turn_section" class="hidden pre_team_block">
+		<!-- <button id="first_player_button" class="button_mash" onclick="onUpdateTurn(true)">First Player</button> -->
+		<h2 id="current_turn_label">Current Turn:</h2>
+		<h2>
+			<span id="current_turn" class="pre_team_block_value" ></span>
+		</h2>
+	</div>
+
+	<div id="highest_score_wager" class="hidden pre_team_block">
+		<h2>Highest Wager:</h2>
+		<h2>
+			<span class="pre_team_block_value" id="highest_score_value"></span>
+		</h2>
+	</div>
+
+	<!-- <?php $game_object->getNextRoundButton(); ?> -->
+	
+
+
+	<span></span>
+	<hr/>
+
+	<div id="teams_block" style="display:none;"></div>
+
+
+	<div style="width:50%;margin:auto;">
+		<div style="width:40%;"">
+			<h3 style="display:inline-block;">
+				<span class="fa fa-refresh teams_icons" onclick="onSyncTeams()" style="color:white;text-decoration:none;">Sync Teams</span>
+				&nbsp;
+				<span id="team-sync" style="color:limegreen;display:none;">Teams Synced!</span>
+			</h3>
+		</div>
+	</div>
+	<table id="teams_table" class="hidden">
+		<colgroup>
+			<col style="width:50%">
+		</colgroup>
+		<thead>
+			<tr>
+				<th><h1>Team Name</h1></th>
+				<th><h1>Score</h1></th>
+				<!-- <th><span class="wager_row hidden">Wager</span></th> -->
+				<th><h1 class="wager_row hidden">Wager</h1></th>
+			</tr>
+		</thead>
+		<tbody id="teams_block2"></tbody>
+	</table>
+
+</div>

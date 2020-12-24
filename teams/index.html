@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../src/game.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="../src/game.css">
+</head>
+<body>
+	<div id="menu">
+		<table id="menu_table" style="width:100%;">
+			<colgroup>
+				<col style="width:33%"/>
+				<col style="width:33%"/>
+				<col style="width:33%"/>
+			</colgroup>
+			<tr>
+				<td >
+					<h2 style="width:50%;">
+						<a id="home_button" href="../">
+				      		<button class="fa fa-caret-square-o-left"></button>
+				      		<span style="text-decoration:none;color:white;"></span>
+				      	</a>
+					</h2>
+				</td>
+				<td>
+					<h2 id="homemade_jeopardy_title">Homemade Jeopardy</h2>
+				</td>
+				<td>
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div id="main_section">
+
+		<div id="enter_game_code_section" class="hidden">
+			<h2>Step 1: Enter Game Code</h2>
+			<input id="player_game_code" type="text" name="player_game_code">
+			<br/><br/>
+			<button type="submit" value="Enter" class="button_mash" onclick="lookup_game()">
+				Enter
+			</button>
+		</div>
+
+		<div id="enter_team_name_section" class="hidden">
+			<h2>Step 2: Enter Team Name</h2>
+			<input id="team_name" type="text" name="team_name">
+			<br/><br/>
+			<button id="" type="submit" value="Enter" class="button_mash" onclick="create_team()">
+				Create Team
+			</button>
+		</div>
+
+		<div id="enter_answers_section" class="hidden">
+			<h2>Team:<br/><span id="team_code">Team Name</span></h2>
+
+			<input id="team_card_id" type="text" name="team_card_id" value="" hidden>
+			<input id="answer" type="text" placeholder="Enter answer here..." name="answer" autocomplete="off">
+			<input id="wager" class="hidden" style="margin-top:2%"  type="number" placeholder="Enter wager here." name="wager" autocomplete="off">
+			<br/><br/>
+			<button type="submit" value="Submit" class="button_mash" onclick="submit_answer()">
+				Submit
+			</button>
+			<div id="submitted_answer_section" class="hidden">
+				<h4>
+					<span class="submitted_answer">Submitted Answer:</span><br/>
+					<span id="submitted_answer_value" >answer</span>
+				</h4>
+				<h4 id="submitted_wager_section" class="hidden">
+					<span class="submitted_answer">Submitted Wager:</span><br/>
+					<span id="submitted_wager_value" ></span>
+				</h4>
+			</div>
+			<br/><br/>
+			<span id="show_wager_link" onclick="onFinalJeopardy()" style="color:lightblue;cursor:pointer;">Click here for Final Jeopardy</span>
+		</div>
+
+	
+	</div>
+</body>
+	<!-- Common Code -->
+	<script src="../src/common.js"></script>
+	<!-- My Trello code -->
+	<script src="../src/trello.js"></script>
+	<script src="../src/teams.js"></script>
+
+</html>

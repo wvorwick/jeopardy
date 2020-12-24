@@ -1,0 +1,29 @@
+<div>
+	
+	<span id="close_question_view" onclick="onCloseQuestion()">CLOSE</span>
+	<div id="question_block"></div>
+	<h2>Value = <span id="value_block"></span></h2>
+	<button id="revealAnswerButton" onclick="onRevealAnswer();">Reveal Answer</button><br/><br/>
+	<div id="answer_block" class="hidden"></div>
+
+	<div id="correct_block" class="hidden">
+		<div>
+			<h2>Who Got It Right?</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>Team</th>
+						<th>Answer</th>
+						<th>Correct?</th>
+					</tr>
+				</thead>
+				<colgroup>
+					<col style="width:30%"/>
+					<col style="width:40%">
+					<col/>
+				</colgroup>
+				<tbody id="team_list"></tbody>
+			</table>
+		</div>	
+	</div>		
+</div>
