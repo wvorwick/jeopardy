@@ -13,8 +13,8 @@
 	function get_started_teams()
 	{
 
-		// Make sure the page doesn't close once the game starts
-		window.addEventListener("beforeunload", onClosePage);
+		// // Make sure the page doesn't close once the game starts
+		// window.addEventListener("beforeunload", onClosePage);
 
 		// Check for existing player if on player screen
 		let path = location.pathname;
