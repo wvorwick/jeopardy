@@ -35,6 +35,15 @@ function test_trello()
 				alert("Need Card ID");
 			}
 			break;
+		case "card-attachments":
+			if(id != undefined)
+			{
+				MyTrello.get_card_attachments(id, print_data);
+			} else
+			{
+				alert("Need Card ID");
+			}
+			break;
 		case "card-actions":
 			if(id != undefined)
 			{

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Test Trello</title>
 		<!-- jQuery library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<!-- Latest compiled JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 	<style type="text/css">	
-
-		.test_section{ border:1px solid black; width:80%; margin:auto; margin-top:2%; }
+		body { background-color: black; color:white; }
+		.test_section{ border:1px solid black; width:40%; float:left; margin-top:2%; }
 	</style>
 </head>
 <body>
@@ -28,6 +28,7 @@
 			<option value="list-create">Create a List</option>
 			<option value="cards">Get Cards</option>
 			<option value="card">Get Single Card</option>
+			<option value="card-attachments">Get Card Attachments</option>
 			<option value="card-actions">Get Card Actions</option>
 			<option value="card-create">Create New Card</option>
 			<option value="card-update">Update Existing Card</option>
@@ -40,6 +41,29 @@
 		<br/><br/>
 		<button onclick="test_trello()">Test Trello</button>
 
+		<div id="test_results"></div>
+	</div>
+	<div class="test_section">
+		<label>Test Form Data:</label>
+
+	<!-- 	<form enctype="">
+			
+		</form>
+		<label for="game_files">Upload Images/Audio:</label>
+		<input type="file" id="game_files" name="game_files" accept="image/*, audio/*" multiple>
+ -->
+		<form method="post" enctype="multipart/form-data">
+		  <div>
+		    <label for="image_uploads">Choose images to upload (PNG, JPG)</label>
+		    <input type="file" id="image_uploads" name="image_uploads" accept=".jpg, .jpeg, .png" multiple>
+		  </div>
+		  <div class="preview">
+		    <p>No files currently selected for upload</p>
+		  </div>
+		  <div>
+		    <button>Submit</button>
+		  </div>
+		</form>
 		<div id="test_results"></div>
 	</div>
 

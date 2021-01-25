@@ -13,21 +13,13 @@ const MyTrello = {
 	wager_field: "5fe16b535ffa5a62d5f64550",
 	list_id: undefined,
 
+	current_game_list_id: "",
+	demo_list_id: "5fdfded5bb29c11e0b959fbd",
+	admin_list_id: "6007bbc9ec73367514314430",
+
 	authorizeTrello: function(){ return true; },
-	// authorizeTrello: function(){
-	// 					let authorized = false;
-	// 					Trello.authorize({
-	// 						type: 'popup',
-	// 						name: 'Jeopardy',
-	// 						persist: true,
-	// 						interactive: false,
-	// 						scope: {	read: 'true', write: 'true' },
-	// 						expiration: 'never',
-	// 						success: function(data) { authorized = true; Logger.log("Trello is Authorized"); },
-	// 						error: function(data) { alert("Trello NOT authorized"); Logger.errorHandler(data) }
-	// 					});
-	// 					return authorized;
-	// 				},
+
+	/*** Admin Calls ***/
 
 	// Get list of boards
 	get_boards: function(successCallback){
@@ -41,39 +33,50 @@ const MyTrello = {
 		myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
 	},
 
+	/*** Helper Functions ***/
+
+	set_current_game_list: function(listID){
+		this.current_game_list_id = listID;
+	},
+
+
+	/*** API Wrapper Calls ***/
+
 	// Gets a single trello cards
 	get_single_card: function(card_id, successCallback){
 						let trello_path = `${this.endpoint}/cards/${card_id}/?key=${this.key}&token=${this.token}`;
 						myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
-						// Trello.cards.get(card_id, successCallback, Logger.errorHandler);
 					},
-	// Gets a single trello cards
+	// Gets a single trello card's actions
 	get_card_actions: function(card_id, successCallback){
 						let trello_path = `${this.endpoint}/cards/${card_id}/actions/?key=${this.key}&token=${this.token}`;
 						myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
-						// Trello.cards.get(card_id, successCallback, Logger.errorHandler);
 					},
+
+	// Gets a single trello card's actions
+	get_card_attachments: function(card_id, successCallback){
+						let trello_path = `${this.endpoint}/cards/${card_id}/attachments/?key=${this.key}&token=${this.token}`;
+						myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
+					},
+
+	// Create attachments on a card
+	create_attachment: function(card_id, data, successCallback){
+		let trello_path = `${this.endpoint}/lists/${this.list_id}/cards?key=${this.key}&token=${this.token}`;
+		myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});		
+	},
 	
 
 	// Get a list of Trello Cards
-	get_cards: function(successCallback){
-					// Trello.get("/lists/"+this.list_id+"/cards", successCallback, Logger.errorHandler);
-					let trello_path = `${this.endpoint}/lists/${this.list_id}/cards?key=${this.key}&token=${this.token}`;
+	get_cards: function(listID, successCallback){
+					let trello_path = `${this.endpoint}/lists/${listID}/cards?key=${this.key}&token=${this.token}`;
 					myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
 				},
 
 	// Creates a new Trello Card
 	create_card: function(team_name, successCallback){
-					// var new_team_obj = {
-					// 	name: team_name, 
-					// 	// desc: "",
-					// 	idList: this.list_id,
-					// 	pos: 'top'
-					// };
 					let params = `name=${team_name}&idList=${this.list_id}&pos=top`;
 					let trello_path = `${this.endpoint}/cards/?key=${this.key}&token=${this.token}&${params}`
 					myajax.AJAX({ method: "POST", path : trello_path, data:"", success: successCallback, failure : Logger.errorHandler});
-					// Trello.post('/cards/', new_team_obj, successCallback);
 				},
 
 	// Update a single card
@@ -81,8 +84,6 @@ const MyTrello = {
 					let param = `desc=${new_desc}`;
 					let trello_path = `${this.endpoint}/cards/${card_id}/?key=${this.key}&token=${this.token}&${param}`;
 					myajax.AJAX({ method: "PUT", path : trello_path, failure : Logger.errorHandler});
-						// Trello.cards.get(card_id, successCallback, Logger.errorHandler);
-					// Trello.put('/cards/'+card_id, {desc: new_desc})
 				},
 
 
@@ -98,58 +99,13 @@ const MyTrello = {
 	// Gets the set of Trello Lists
 	get_lists: function(successCallback){
 					let trello_path = `${this.endpoint}/boards/${this.board_id}/lists?key=${this.key}&token=${this.token}`;
-					// Trello.get("/boards/"+this.board_id+"/lists", successCallback, Logger.errorHandler);
-					// Trello.get(path, successCallback, Logger.errorHandler);
 					myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
 				},
 
 	// Create a new list
 	create_list: function(listName,successCallback){
 					let param = `name=${listName}`
-					// var new_list_obj = {
-					// 	name:listName
-					// };
 					let trello_path = `${this.endpoint}/boards/${this.board_id}/lists?key=${this.key}&token=${this.token}&${param}`
 					myajax.AJAX({ method: "POST", path : trello_path, data:"", success: successCallback, failure : Logger.errorHandler});
-					// Trello.post("/boards/"+this.board_id+"/lists", new_list_obj, successCallback);
 				},
 }
-
-// function trello_api(entity, identifier=undefined){
-// 	if (entity.toLowerCase() !== "boards" && identifier == undefined ){
-// 		console.error("Could not run a Trello query! No Identifier provided!");
-// 	} else {
-// 		var apiURI; 
-// 		switch(entity){
-// 			case "boards":
-// 				apiURI = "/members/me/boards";
-// 				break;
-// 			case "lists":
-// 				let boardID = identifier;
-// 				apiURI ="/boards/"+boardID+"/lists"; 
-// 				break;
-// 			case "customFieldsOnBoard":
-// 				let boardID2 = identifier;
-// 				apiURI = "/boards/"+boardID2+"/customFields"; 
-// 				break;
-// 			case "cards":
-// 				let listID = identifier; 
-// 				apiURI ="/lists/"+listID+"/cards"; 
-// 				// Trello.get("/lists/"+idVal+"/cards?fields=name&customFieldItems=true", print);
-// 				break;
-// 			case "customFieldsOnCards":
-// 				let cardID2 = identifier; 
-// 				apiURI = "/cards/"+cardID2+"/?fields=name&customFieldItems=true";
-// 				break;
-// 			default:
-// 				console.error("Did not get anything! Tried - " + entity);
-// 				apiURI = "n/a";
-// 		}
-
-// 		//  Return a promise with the results of the API call. 
-// 		return Trello.get(apiURI).then( 
-// 			function(payload){ return payload }, 
-// 			function(error){ return error; } 
-// 		);
-// 	}
-// 		}

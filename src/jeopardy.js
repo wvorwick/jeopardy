@@ -72,9 +72,6 @@ class Category
 	{
 		return this.questions;
 	}
-
-
-
 }
 
 class Question

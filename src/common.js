@@ -60,7 +60,13 @@ const mydoc = {
 			query_map[splits[0]] = splits[1];
 		});
 		return query_map;
-	}
+	},
+
+	get_form_data: function(formID){
+		var formElement = document.querySelector(`#${formID}`);
+		let formData = new FormData(formElement);
+		return formData;
+	},
 };
 const myajax = { 
 	

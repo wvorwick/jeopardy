@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
+<head>
+
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../src/game.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" type="text/css" href="../src/game.css">
+</head>
+<body>
+	<div id="main_section">
+		<h1 id="homemade_jeopardy_title">Homemade Jeopardy</h1>
+
+		<hr>
+
+		<div>
+			<label for="game_files">Upload Images/Audio:</label>
+			<input type="file" id="game_files" name="game_files" accept="image/*, audio/*" multiple>
+		</div>
+
+		<script type="text/javascript">
+			document.getElementById("game_files").addEventListener("change",function(obj)
+			{
+				let ele = document.getElementById("game_files");
+				console.log(ele.value);
+			});
+		</script>
+
+
+		<!-- Load Game Section -->
+		<div id="load_game_section">
+			<p>Use this page to load the home-made Jeopardy game.</p>
+			<h2>Step 1: Create a Game Sheet</h2>
+			<div style="width:50%; margin:auto;">
+				<ol id="host_instructions">
+					<li>
+						You should already have a game created in a Google Sheet.
+						<ul>
+							<li>
+								It should have the same columns as the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">game template</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						Ensure your Google Sheet is published to the web with document type = <strong>Tab-separated values (.tsv)</strong> 
+						<ul>
+							<li>You can publish the "Entire Document" as long as you have one sheet or the game sheet is the first sheet.</li>
+						</ul>
+					</li>
+				</ol>
+			</div>
+			<h2>Step 2: Save the Game Content</h2>
+			<div style="width:50%; margin:auto;">
+				<ol id="host_instructions">
+					<li>
+						You should already have a game created in a Google Sheet.
+						<ul>
+							<li>
+								It should have the same columns as the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">game template</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						Ensure your Google Sheet is published to the web with document type = <strong>Tab-separated values (.tsv)</strong> 
+						<ul>
+							<li>You can publish the "Entire Document" as long as you have one sheet or the game sheet is the first sheet.</li>
+						</ul>
+					</li>
+				</ol>
+			</div>
+		</div>
+	</div>
+</body>
+	<!-- Common Code -->
+	<script src="../src/common.js"></script>
+	<!-- My Trello code -->
+	<script src="../src/trello.js"></script>
+	<!-- My Source JS -->
+	<script src="../src/jeopardy.js"></script>
+	<script src="../src/board.js"></script>
+</html>

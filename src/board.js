@@ -3,17 +3,14 @@
 	GLOBAL VARIABLES 
 *********************************************************************************/
 
-	const TIMER_DEFAULT = 15;
-	var timer_running = false;
-	// var countdown_timer = setInterval(function(){console.log("Hello, World")}, 50000000);
-	var countdown_timer = undefined;
-
 	var teams_added = [];
 	var current_team_idx = -1;
 
 	var JeopardyGame = undefined;
 
-	var question_answer_map = {};
+	var QA_MAP = {};   //The Question-Answer map;
+	var GAME_NAME  = "Home-made Jeopardy";
+	var GAME_MEDIA = {};
 
 /********************************************************************************
 	GETTING STARTED
@@ -53,29 +50,118 @@
 		});
 	}
 
-	// Get the list of games from the spreadsheet
-	function load_game_from_google()
-	// function get_games()
+	// Loading view
+	function toggle_loading_gif(forceHide=false)
 	{
-		// let path = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSQ77zojpfj3f_5XOdXmkWrtxNaVevXvlkldRk_VNikVJpktMvWd3B4mKSoukROtYQ-iwCNtDWZKt56/pub?gid=759186770&single=true&output=csv";		
-		let path = document.getElementById("google_sheet_url").value;
+		let section = document.getElementById("loading_gif");
+		let isHidden = section.classList.contains("hidden")
+
+		if(isHidden)
+		{
+			mydoc.show_section("loading_gif");		
+		}
+		if(!isHidden || forceHide)
+		{
+			mydoc.hide_section("loading_gif");	
+		}
+	}
+
+	// Set loading results
+	function set_loading_results(value)
+	{
+		toggle_loading_gif(true);
+		let section = document.getElementById("loading_results_section");
+		section.innerText = value;
+	}
+
+	// Get the cards
+	function load_game_from_trello()
+	{
+
+		// Clear loading results
+		set_loading_results("");
+
+		let game_name_ele = document.getElementById("game_name_to_load");
+		
+		// Show the loading section
+		toggle_loading_gif();
+
+		try
+		{
+			let given_game_name = game_name_ele.value;
+
+			MyTrello.get_cards(MyTrello.admin_list_id, function(data){
+				response = JSON.parse(data.responseText);
+
+				game_found = false;
+				response.forEach(function(card){
+
+					let name = card["name"];
+					if(name.toLowerCase() == given_game_name.toLowerCase())
+					{
+						game_found = true;
+						GAME_NAME = given_game_name;
+						// card_id = obj["id"];
+						// url_value = obj["desc"].trim();
+						load_attachments_from_trello(card);
+					}
+				});
+				if(!game_found){
+					set_loading_results("Could not find game with that name!");
+				}
+			});
+		}
+		catch(error)
+		{
+			set_loading_results("Sorry, something went wrong!\n\n"+error);
+		}
+	}
+
+	// Get the attachments on the card (if any)
+	function load_attachments_from_trello(card)
+	{
+		let card_id = card["id"];
+		let url_value = card["desc"].trim();
+
+		MyTrello.get_card_attachments(card_id, function(data){
+
+			response = JSON.parse(data.responseText);
+
+			if(response.length > 0) //Process the attachments, then load the spreadsheet;
+			{
+				Logger.log("Loading attachments from card");
+				response.forEach(function(obj){
+					name = obj["fileName"];
+					path = obj["url"];
+					GAME_MEDIA[name] = path;
+				});
+				load_game_from_google(url_value);
+			}
+			else
+			{
+				Logger.log("No Attachments Included; Just loading Questions");
+				load_game_from_google(url_value);
+			}
+		});
+	}
+
+	// Get the list of games from the spreadsheet
+	function load_game_from_google(urlPath)
+	{
 		let response = "";
 
 		myajax.AJAX(
 	    	{
 		      method: "GET",
-		      path : path,
+		      path : urlPath,
 		      cacheControl: "no-cache",
 		      success: function(request){
 		      	Logger.log("Got the Game Data from Google!");
 		      	preprocess_game_sheet(request);
 		      },
 		      failure : function(request){
-		      	console.log("FAILURE:");
-		      	alert("FAILURE");
-		      	response = request;
-		        // obj.innerHTML = "---";
-		        // if (finalJeopardy){ setWager(teamCode); }
+		      	Logger.log("Something went wrong when trying to get data from Google!");
+		      	preprocess_game_sheet(request);
 		      }
 		    }
 		);
@@ -99,8 +185,20 @@
 		}
 		else
 		{
-			alert("ERROR: Your sheet is not valid. Please refer to the instructions/template for a valid sheet configuration.");
+			toggle_loading_gif(true);
+			set_loading_results("ERROR: Your sheet is not valid. Please refer to the instructions/template for a valid sheet configuration.\n\n");
 		}
+	}
+
+	// Get the game media based on a given value
+	function get_game_media_url(value)
+	{
+		let url = "";
+		if(GAME_MEDIA.hasOwnProperty(value))
+		{
+			url = GAME_MEDIA[value];
+		}
+		return url;
 	}
 
 	// Creates the Jeopardy game objects
@@ -120,19 +218,13 @@
 			let daily_double	= content[2];
 
 			let question_text 	= content[3];
-			let question_audio 	= content[4];
-			let question_image 	= content[5];
+			let question_audio 	= get_game_media_url(content[4]);
+			let question_image 	= get_game_media_url(content[5]);
 			let question_url 	= content[6];
 			let answer_text 	= content[7];
-			let answer_audio 	= content[8];
-			let answer_image 	= content[9];
+			let answer_audio 	= get_game_media_url(content[8]);
+			let answer_image 	= get_game_media_url(content[9]);
 			let answer_url 		= content[10];
-
-			// if(category == "The Magic Number")
-			// {
-			// 	console.log(content);
-			// 	console.log(row);
-			// }
 
 			// Setup the new question
 			let new_question = new Question(question_text, question_audio, question_image, question_url,
@@ -161,63 +253,48 @@
 	// Handles setting up all the pieces for the game;
 	function initialize_game()
 	{
-		// Set Game Names
+		// Check for "debug" flag
+		let query_map = mydoc.get_query_map();
+		let is_debugging = (query_map.hasOwnProperty("debug") && query_map["debug"]==1) ? true : false;
 
-		entered_name = document.getElementById("entered_game_name").value;
-		game_name = (entered_name != undefined) ? entered_name : "Jeopardy";
-		document.getElementById("game_name").innerHTML = entered_name;
+
+		// Set Game Name
+		document.getElementById("game_name").innerHTML = GAME_NAME;
 
 		// Creates the game table
 		create_game_board();
 
 		mydoc.hide_section("load_game_section");
 		mydoc.hide_section("homemade_jeopardy_title");
+		toggle_loading_gif();
+
 		mydoc.show_section("game_section");
+
 		// document.getElementById("load_game_section").classList.add("hidden");
 		// document.getElementById("game_section2").classList.remove("hidden");
 		addListenerCategoryClick();
 		addListenerQuestionClick();
 
 		// set the game code
-		let game_code = getGameCode();
+		let game_code = (!is_debugging) ? getGameCode() : "DEMO";
 		document.getElementById("game_code").innerHTML = game_code;
 
-		// Create new list with game code
-		mydoc.get_query_map();
-
-		// Check for "debug" falg
-		let query_map = mydoc.get_query_map();
-		if(query_map.hasOwnProperty("debug") && query_map["debug"] ==1 )
+		// Either get the DEMO list or create a new list with the game code;
+		if(is_debugging)
 		{
-			MyTrello.get_lists(function(data){
-				response = JSON.parse(data.responseText);
-				response.forEach(function(obj){
-					if(obj["name"] == "DEMO")
-					{
-						MyTrello.list_id = obj["id"];
-						Logger.log("List ID: " + MyTrello.list_id);
-						document.getElementById("game_code").innerHTML = "DEMO";
 
-					}
-				});
-			});
+			MyTrello.set_current_game_list(MyTrello.demo_list_id);
+			Logger.log("Current Game List ID: " + MyTrello.current_game_list_id);
 		} 
 		else
 		{
-
-
 			MyTrello.create_list(game_code,function(data){
 				response = JSON.parse(data.responseText);
-				MyTrello.list_id = response["id"];
-				Logger.log("List ID: " + MyTrello.list_id);
+				MyTrello.set_current_game_list(response["id"]);
+				Logger.log("Current Game List ID: " + MyTrello.current_game_list_id);
 			});
 		}
-		// // Hard code for testing
-		// MyTrello.list_id = "5fdfded5bb29c11e0b959fbd";
-		// console.log(MyTrello.list_id);
 	}
-
-
 
 
 /********************************************************************************
@@ -231,6 +308,13 @@
 		{
 			case "Escape":
 				onCloseQuestion();
+				break;
+			case "ControlLeft":
+			case "ControlRight":
+				if(Timer != undefined)
+				{
+					Timer.startTimer();
+				}
 				break;
 			default:
 				return;
@@ -325,7 +409,7 @@
 		document.getElementById("correct_block").classList.add("hidden");
 		document.getElementById("question_view").classList.add("hidden");
 		document.getElementById("team_list").innerHTML = ""; // Reset the list of teams, so that it doesn't stack up each time.
-		resetTimer(); // make sure the timer is reset to default.
+		Timer.resetTimer(); // make sure the timer is reset to default.
 		onUpdateTurn(); // Pick whos turn it is next
 		resetAnswers(); // Reset the answers for each team.
 	}
@@ -417,56 +501,6 @@
 
 		console.log(highest_score);
 
-	}
-	
-	//Reset the timer back to the default value
-	function onResetTimer(){ resetTimer(); }
-
-	//Start the timer
-	function onStartTimer()
-	{
-		toggleTimerButtons("start");
-
-		if(!countdown_timer)
-		{
-			countdown_timer = setInterval(function(){
-				time_ele 	= document.getElementById("timer_second");
-				time_ele.contentEditable = false;
-				time 		= time_ele.innerHTML;
-				time 		= time.replace(" ", "");
-				time 		= Number(time);
-				time 		-= 1;
-
-				// Return withot doing anything if there is an unacceptable value to display
-				if (isNaN(time) || time == undefined || time == -1){ 
-					// stopInterval(); 
-					resetTimer();
-					toggleTimerButtons("timeup");
-					return; 
-				} 
-				new_time 	= (time < 10) ? "0" + time : time;
-				time_ele.innerHTML = new_time;
-				if (Number(new_time) <= 5){
-					speakText(Number(new_time));
-				}
-				if (time == 0)
-				{
-					setTimeColor("red");
-					toggleTimerButtons("timeup");
-					stopInterval();
-				}
-			}, 1100);
-		}		
-	}
-
-	//Stop the timer
-	function onStopTimer()
-	{
-		if(countdown_timer)
-		{
-			toggleTimerButtons("stop");
-			stopInterval();
-		}
 	}
 
 	function onSyncTeams(selectPlayer)
@@ -562,7 +596,7 @@
 				ans   = question.getAnswer();
 				key = (isFinalJeopardy) ? category_name : (category_name + " - " + quest["value"]);
 
-				question_answer_map[key] = {
+				QA_MAP[key] = {
 					"question": quest,
 					"answer"  : ans
 				}
@@ -608,36 +642,6 @@
 		return visible;
 	}
 
-	function toggleTimerButtons(state)
-	{
-		let start = document.getElementById("timer_start");
-		let stop  = document.getElementById("timer_stop");
-		let reset = document.getElementById("timer_reset");
-
-		switch(state)
-		{
-			case "start":
-				start.style.display = "none";
-				stop.style.display = "inline";
-				reset.style.display = "none";
-				break;
-			case "timeup":
-				start.style.display = "none";
-				stop.style.display = "none";
-				reset.style.display = "inline";
-				break;
-			case "stop":
-				start.style.display = "inline";
-				stop.style.display = "none";
-				reset.style.display = "none";
-				break;
-			default:
-				start.style.display = "inline";
-				stop.style.display = "none";
-				reset.style.display = "none";
-		}
-	}
-
 	function getMaxPossibleWager()
 	{
 		let max = 0;
@@ -655,7 +659,6 @@
 		return max;
 	}
 
-
 	/* Purpose: Returns a random character from the alphabet; Used to generate team codes */
 	function getRandomCharacter()
 	{
@@ -672,8 +675,12 @@
 		let char3 = getRandomCharacter();
 		let char4 = getRandomCharacter();
 
-		let game_code = char1 + char2 + char3 + char4;
-		return game_code;
+		let chars = char1 + char2 + char3 + char4;
+
+		// Make sure the code is not demo;
+		let game_code = (chars == "DEMO") ? getGameCode() : chars;
+
+		return game_code
 	}
 
  /* CREATE / SET */ 
@@ -713,12 +720,6 @@
 		});
 	}
 
-	function setTimeColor(color)
-	{
-		document.getElementById("timer_minute").style.color = color;
-		document.getElementById("timer_second").style.color = color;
-	}
-
  /* LOAD / GET */
 	function getCheckBox(teamName, teamCode)
 	{
@@ -752,7 +753,7 @@
 
 	function loadQuestion(cell)
 	{
-		resetTimer();
+		Timer.resetTimer();
 
 		Logger.log("Loading Question");
 		Logger.log(cell);
@@ -769,7 +770,7 @@
 
 		let key = cell.getAttribute("data-jpd-quest-key");
 
-		let map = question_answer_map[key];
+		let map = QA_MAP[key];
 
 		let question = formatContent(map["question"]);
 		let answer   = formatContent(map["answer"]);
@@ -874,7 +875,7 @@
 		return formatted;
 	}
 
- /* UPDATE */
+ /* UPDATING GAME THINGS */
 	function updateScore()
 	{
 		var correct = document.querySelectorAll(".correct_team"); // Get the list of teams that got it correct
@@ -909,7 +910,6 @@
 		// updateLeader();
 		updateLeader();
 	}
-
 
 	function updateLeader()
 	{
@@ -971,30 +971,6 @@
 	}
 
  /* STOP / RESET */
-
-	function stopInterval()
-	{
-		if(countdown_timer)
-		{
-			clearInterval(countdown_timer);
-		}
-		document.getElementById("timer_second").contentEditable = true;
-	}
-
-	function resetTimer()
-	{
-		stopInterval();
-		countdown_timer = undefined;
-		toggleTimerButtons("stop");
-		setTimeColor("white");
-		document.getElementById("timer_second").innerHTML = TIMER_DEFAULT;
-
-		if (isFinalJeopardy2())
-		{
-			document.getElementById("final_jeopardy_audio").classList.remove("hidden");
-			document.getElementById("time_view_regular").classList.add("hidden");
-		}
-	}
 
 	function resetAnswers()
 	{

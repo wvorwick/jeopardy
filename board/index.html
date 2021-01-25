@@ -17,38 +17,17 @@
 
 		<!-- Load Game Section -->
 		<div id="load_game_section">
+			<h2>Enter Game Name</h2>
 			<p>Use this page to load the home-made Jeopardy game.</p>
-			<h2>Step 1: Enter Name</h2>
-			<input id="entered_game_name" type="text" name="entered_game_name" placeholder="Enter game name">
-
-			<h2>Step 2: Enter Game Sheet</h1>
-			<div style="width:50%; margin:auto;">
-				<ol id="host_instructions">
-					<li>
-						You should already have a game created in a Google Sheet.
-						<ul>
-							<li>
-								It should have the same columns as the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">game template</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						Ensure your Google Sheet is published to the web with document type = <strong>Tab-separated values (.tsv)</strong> 
-						<ul>
-							<li>You can publish the "Entire Document" as long as you have one sheet or the game sheet is the first sheet.</li>
-						</ul>
-					</li>
-					<li>
-						Click on <strong>START GAME</strong>.
-					</li>
-				</ol>
-			</div>
-			<input id="google_sheet_url" type="text" name="google_sheet_id" placeholder="Paste Google Sheet URL">
+			<input id="game_name_to_load" type="text" name="game_name" placeholder="Enter the name of your game">
 			<div style="margin-top:2%;">
-				<button class="button_mash" onclick="load_game_from_google()">
-					START GAME
+				<button class="button_mash" onclick="load_game_from_trello()">
+					LOAD GAME
 				</button>
 			</div>
+
+			<img id="loading_gif" src="../assets/img/loading1.gif" class="hidden">
+			<div id="loading_results_section"></div>
 		</div>
 	</div>
 
@@ -72,6 +51,7 @@
 	<!-- My Trello code -->
 	<script src="../src/trello.js"></script>
 	<!-- My Source JS -->
+	<script src="../src/timer.js"></script>
 	<script src="../src/jeopardy.js"></script>
 	<script src="../src/board.js"></script>
 </html>
