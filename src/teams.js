@@ -151,13 +151,17 @@
 
 	function create_team()
 	{
+		// Disable the button and show loading gif;
+		document.getElementById("create_team_button").disabled = true;
+		mydoc.show_section("loading_gif");
+
 		let team_input = document.getElementById("team_name");
 		let team_name = team_input.value;
 
 		let existing_team_id = undefined;
 		
 		// Check for existing cards before creating a new card; Match on name
-		MyTrello.get_cards(function(data){
+		MyTrello.get_lists(function(data){
 
 			response = JSON.parse(data.responseText);
 			response.forEach(function(obj)
@@ -183,14 +187,10 @@
 					response = JSON.parse(data.responseText);
 					team_id = response["id"];
 
-					// setTimeout(function(){
 					load_url = "http://" + location.host + location.pathname + "?teamid=" + team_id;
 					location.replace(load_url);
-					// }, 1000)
-					
-					// show_team_answer_sect(team_name, team_id);
 
-				}, Logger.errorHandler)
+				});
 			}
 
 		}, Logger.errorHandler);

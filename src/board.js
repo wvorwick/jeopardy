@@ -16,25 +16,49 @@
 	GETTING STARTED
 *********************************************************************************/
 
-	document.addEventListener("DOMContentLoaded", get_started_board);
-
-	function get_started_board()
-	{
-
+	mydoc.ready(function(){
 		// Make sure the page doesn't close once the game starts
 		window.addEventListener("beforeunload", onClosePage);
+
+		// Set the game board listeners
+		game_board_listeners();
 
 		// Load the additional views
 		load_views();
 
-		// // Authorize first
-		// let isAuthorized = MyTrello.authorizeTrello()
+		// Set timer callback
+		if(Timer)
+		{
+			Timer.setTimeUpCallback(function(){
+				document.getElementById("time_up_sound").play();
+			});
+		}
+	});
 
-		// if(isAuthorized)
-		// {
-		// 	// Hide the authentication section
-		// 	mydoc.hide_section("authenticate_section");
-		// }
+	function game_board_listeners()
+	{
+		document.addEventListener("keyup", function(event)
+		{
+			switch(event.code)
+			{
+				case "Escape":
+					onCloseQuestion();
+					break;
+				case "ControlLeft":
+				case "ControlRight":
+					if(Timer != undefined)
+					{
+						Timer.startTimer();
+					}
+					else
+					{
+						Timer.resetTimer();
+					}
+					break;
+				default:
+					return;
+			}
+		});
 	}
 
 	function load_views(){
@@ -100,7 +124,7 @@
 					if(name.toLowerCase() == given_game_name.toLowerCase())
 					{
 						game_found = true;
-						GAME_NAME = given_game_name;
+						GAME_NAME = name;
 						// card_id = obj["id"];
 						// url_value = obj["desc"].trim();
 						load_attachments_from_trello(card);
@@ -301,26 +325,6 @@
 	EVENT LISTENERS
 *********************************************************************************/
 
-
-	document.addEventListener("keyup", function(event)
-	{
-		switch(event.code)
-		{
-			case "Escape":
-				onCloseQuestion();
-				break;
-			case "ControlLeft":
-			case "ControlRight":
-				if(Timer != undefined)
-				{
-					Timer.startTimer();
-				}
-				break;
-			default:
-				return;
-		}
-	});
-
 	// Prevent the page accidentally closing
 	function onClosePage(event)
 	{
@@ -404,6 +408,7 @@
 	//Close the current question; Calls to reset timer, update turn, and clear answers
 	function onCloseQuestion()
 	{
+		window.scrollTo(0,0); // Scroll back to the top of the page;
 		updateScore();
 		document.getElementById("answer_block").classList.add("hidden");
 		document.getElementById("correct_block").classList.add("hidden");
@@ -486,17 +491,24 @@
 		let round2Row = document.getElementById("round_2_row");
 		if (round2Row != undefined){ round2Row.classList.add("hidden"); }
 
+		// Hide these things
+		mydoc.hide_section("time_view_regular");
+		mydoc.show_section("final_jeopardy_audio");
+
 		// Show these things
+		mydoc.show_section("final_jeopardy_audio");
+
 		document.getElementById("final_jeopardy_row").classList.remove("hidden");
 		document.getElementById("final_jeopardy_row").classList.add("final_jeopardy_row");
 
 		document.getElementById("highest_score_wager").classList.remove("hidden");
 
+
 		let wagerCells = document.getElementsByClassName("wager_row");
 		for (let x = 0; x < wagerCells.length; x++) { wagerCells[x].classList.remove("hidden"); }
 
 		var team_scores = document.querySelectorAll("span.team_score");
-		let highest_score  = team_scores[0].innerText;
+		let highest_score  = (team_scores.length > 0) ? team_scores[0].innerText : "0";
 		document.getElementById("highest_score_value").innerText = highest_score;
 
 		console.log(highest_score);
@@ -505,7 +517,7 @@
 
 	function onSyncTeams(selectPlayer)
 	{
-		MyTrello.get_cards(function(data){
+		MyTrello.get_cards(MyTrello.current_game_list_id, function(data){
 
 			response = JSON.parse(data.responseText);
 			response.forEach(function(obj){
@@ -870,7 +882,7 @@
 		formatted = "";
 		if(value != "")
 		{
-			formatted = `<a class='answer_link' href=\"${value}\" target='_blank'>${value}</a>`;
+			formatted = `<br/><a class='answer_link' href=\"${value}\" target='_blank'>${value}</a>`;
 		}
 		return formatted;
 	}

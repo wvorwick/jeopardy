@@ -45,8 +45,10 @@ const Timer = {
 					Timer.toggleTimerButtons("timeup");
 					Timer.stopInterval();
 
-					let audioEle = document.getElementById("duplicate_answer_sound");
-					if(audioEle != undefined){ audioEle.play(); }
+					if(Timer.timeUpCallback)
+					{
+						Timer.timeUpCallback();
+					}
 				}
 			}, 1100);
 		}		
@@ -121,6 +123,14 @@ const Timer = {
 	{
 		this.timer_default = value;
 		this.setTimerSeconds(this.timer_default);
+	},
+
+	timeUpCallback: function(){
+		console.log("Time is up");
+	},
+
+	setTimeUpCallback: function(callback){
+		Timer.timeUpCallback = callback;
 	},
 
 	stopInterval: function()
