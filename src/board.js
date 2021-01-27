@@ -11,6 +11,7 @@
 	var QA_MAP = {};   //The Question-Answer map;
 	var GAME_NAME  = "Home-made Jeopardy";
 	var GAME_MEDIA = {};
+	var IS_TEST_RUN = false;
 
 /********************************************************************************
 	GETTING STARTED
@@ -33,7 +34,28 @@
 				document.getElementById("time_up_sound").play();
 			});
 		}
+
+		// Setting the DEMO game name if it is such
+		if(isDemoFlagSet())
+		{
+			document.getElementById("game_name_to_load").value = "DEMO";
+			document.getElementById("load_game_button").disabled = true;
+			document.getElementById("load_test_game_button").disabled = true;
+			load_game_from_trello();
+		}
 	});
+
+	// Check if Demo Flag is set
+	function isDemoFlagSet()
+	{
+		let is_demo = false;
+		let query_map = mydoc.get_query_map();
+		if(query_map != undefined)
+		{
+			is_demo = (query_map.hasOwnProperty("demo") && query_map["demo"]==1) ? true : false;
+		}
+		return is_demo;
+	}
 
 	function game_board_listeners()
 	{
@@ -99,8 +121,11 @@
 	}
 
 	// Get the cards
-	function load_game_from_trello()
+	function load_game_from_trello(isTestRun=false)
 	{
+
+		// Set if it is a test run;
+		IS_TEST_RUN = isTestRun; 
 
 		// Clear loading results
 		set_loading_results("");
@@ -130,7 +155,9 @@
 						load_attachments_from_trello(card);
 					}
 				});
-				if(!game_found){
+				
+				if(!game_found)
+				{
 					set_loading_results("Could not find game with that name!");
 				}
 			});
@@ -277,11 +304,6 @@
 	// Handles setting up all the pieces for the game;
 	function initialize_game()
 	{
-		// Check for "debug" flag
-		let query_map = mydoc.get_query_map();
-		let is_debugging = (query_map.hasOwnProperty("debug") && query_map["debug"]==1) ? true : false;
-
-
 		// Set Game Name
 		document.getElementById("game_name").innerHTML = GAME_NAME;
 
@@ -294,22 +316,24 @@
 
 		mydoc.show_section("game_section");
 
-		// document.getElementById("load_game_section").classList.add("hidden");
-		// document.getElementById("game_section2").classList.remove("hidden");
 		addListenerCategoryClick();
 		addListenerQuestionClick();
 
 		// set the game code
-		let game_code = (!is_debugging) ? getGameCode() : "DEMO";
+		let game_code = getGameCode();
 		document.getElementById("game_code").innerHTML = game_code;
 
-		// Either get the DEMO list or create a new list with the game code;
-		if(is_debugging)
+		// Set the appropriate list based on DEMO, TEST, or real game
+		if(isDemoFlagSet())
 		{
-
 			MyTrello.set_current_game_list(MyTrello.demo_list_id);
-			Logger.log("Current Game List ID: " + MyTrello.current_game_list_id);
+			Logger.log("Current Game List ID: " + MyTrello.demo_list_id);
 		} 
+		else if (IS_TEST_RUN)
+		{
+			MyTrello.set_current_game_list(MyTrello.test_list_id);
+			Logger.log("Current Game List ID: " + MyTrello.test_list_id);
+		}
 		else
 		{
 			MyTrello.create_list(game_code,function(data){
@@ -319,7 +343,6 @@
 			});
 		}
 	}
-
 
 /********************************************************************************
 	EVENT LISTENERS
@@ -435,41 +458,44 @@
 		//  Show these things:
 		mydoc.show_section("teams_table");
 		mydoc.show_section("round_1_row");
-		mydoc.show_section("current_turn_section");
 		mydoc.show_section("finalJeopardyButton");
-		
 
-		mydoc.show_section("current_turn_section");
-
-		// document.getElementById("teams_table").classList.remove("hidden");
-		// document.getElementById("round_1_row").classList.remove("hidden");
-		// document.getElementById("current_turn_section").classList.remove("hidden");
-		// document.getElementById("finalJeopardyButton").classList.remove("hidden");
-		
 		// Only used if multiple rounds are set;
 		let nextRound = document.getElementById("next_round");
 		if (nextRound != undefined)
 		{
 			nextRound.classList.remove("hidden");
 		}
+	}
 
+	// Set the current player
+	function setCurrentPlayer(idx=-1)
+	{
+		if(idx != -1)
+		{
+			mydoc.show_section("current_turn_section");
+			nextTeam = teams_added[nextIdx];
+			document.getElementById("current_turn").innerText = nextTeam;
+			// Update the index for next iteration
+			current_team_idx = nextIdx;
+		}
 	}
 
 	// Selects the next player
-	function onUpdateTurn(random=false)
+	function onUpdateTurn()
 	{
-		Logger.log("Updating Turn");
-
 		numTeams  = teams_added.length;
+		if(numTeams > 0)
+		{
+			Logger.log("Updating Turn");
 
-		nextIdx = (random) ? Math.floor(Math.random() * numTeams) : current_team_idx+1;
-		nextIdx = (nextIdx == numTeams) ? 0 : nextIdx;
+			random = ( !isCurrentPlayerSet() ) ? true : false;
 
-		nextTeam = teams_added[nextIdx];
-		document.getElementById("current_turn").innerText = nextTeam;
+			nextIdx = (random) ? Math.floor(Math.random() * numTeams) : current_team_idx+1;
+			nextIdx = (nextIdx == numTeams) ? 0 : nextIdx;
 
-		// Update the index for next iteration
-		current_team_idx = nextIdx;
+			setCurrentPlayer(nextIdx);			
+		}	
 	}
 
 	// Show the next set of questions in the second round
@@ -515,6 +541,7 @@
 
 	}
 
+	// Sync the teams
 	function onSyncTeams(selectPlayer)
 	{
 		MyTrello.get_cards(MyTrello.current_game_list_id, function(data){
@@ -530,16 +557,16 @@
 					teams_added.push(name);
 					onAddTeam(code, name);
 				}
-
-				document.getElementById("team-sync").style.display = "inline";
-				setTimeout(function(){
-					document.getElementById("team-sync").style.display = "none";
-				}, 1000);
-
 			});
 
-			// Selects a random player once players have been loaded;
-			if(selectPlayer){ onUpdateTurn(true); }
+			document.getElementById("team-sync").style.display = "inline";
+			setTimeout(function(){
+				document.getElementById("team-sync").style.display = "none";
+			}, 1000);
+
+			// Selects a random player if one isn't already set; 
+			if(!isCurrentPlayerSet()){ onUpdateTurn(); }
+			// if(selectPlayer){ onUpdateTurn(true); }
 		});
 	}
 
@@ -671,6 +698,12 @@
 		return max;
 	}
 
+	// check if a current player has been set
+	function isCurrentPlayerSet()
+	{
+		return (current_team_idx > -1);
+	}
+
 	/* Purpose: Returns a random character from the alphabet; Used to generate team codes */
 	function getRandomCharacter()
 	{
@@ -682,15 +715,31 @@
 	/* Purpose: Generates 4 random characters to create a team code; */
 	function getGameCode()
 	{
-		let char1 = getRandomCharacter();
-		let char2 = getRandomCharacter();
-		let char3 = getRandomCharacter();
-		let char4 = getRandomCharacter();
+		
+		let game_code = "";
 
-		let chars = char1 + char2 + char3 + char4;
+		if(isDemoFlagSet())
+		{
+			game_code = "DEMO";
+		}
+		else if(IS_TEST_RUN)
+		{
+			game_code = "TEST";
+		}
+		else
+		{
+			let char1 = getRandomCharacter();
+			let char2 = getRandomCharacter();
+			let char3 = getRandomCharacter();
+			let char4 = getRandomCharacter();
 
-		// Make sure the code is not demo;
-		let game_code = (chars == "DEMO") ? getGameCode() : chars;
+			let chars = char1 + char2 + char3 + char4;
+
+			// Make sure the code is not demo;
+			game_code = (chars == "DEMO") ? getGameCode() : chars;
+		}
+
+		Logger.log("Game Code = " + game_code);
 
 		return game_code
 	}

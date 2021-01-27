@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Board</title>
 <html>
 <head>
 
@@ -20,12 +21,16 @@
 	<div id="main_section">
 		<!-- Load Game Section -->
 		<div id="load_game_section">
-			<h2>Enter Game Name</h2>
+			<!-- <h2>Enter Game Name</h2> -->
 			<p>Use this page to load the home-made Jeopardy game.</p>
 			<input id="game_name_to_load" type="text" name="game_name" placeholder="Enter the name of your game">
 			<div style="margin-top:2%;">
-				<button class="button_mash" onclick="load_game_from_trello()">
-					LOAD GAME
+				<button id="load_test_game_button" class="button_mash" onclick="load_game_from_trello(true)">
+					TEST RUN GAME
+				</button>
+				<br/><br/>
+				<button id="load_game_button" class="button_mash" onclick="load_game_from_trello()">
+					PLAY GAME
 				</button>
 			</div>
 			<img id="loading_gif" src="../assets/img/loading1.gif" class="hidden">

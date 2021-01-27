@@ -15,6 +15,7 @@ const MyTrello = {
 
 	current_game_list_id: "",
 	demo_list_id: "5fdfd980e5fd1b0cd5218f6d",
+	test_list_id: "60115ebf2caf916afa9cc107",
 	admin_list_id: "6007bbc9ec73367514314430",
 
 	authorizeTrello: function(){ return true; },
