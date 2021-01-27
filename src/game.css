@@ -54,9 +54,7 @@
 	#menu h1 { width:100%; text-align:center; margin-bottom:0%;}
 
 	.menu_button { float:right; margin-right:1%; margin-top:2%; cursor:pointer; }
-
-	/*#home_button { float:left; margin-left:1%; margin-top:1%; cursor:pointer; }*/
-	#home_button { position:fixed; left:0; top:5; margin-left:1%; margin-top:1%; cursor:pointer; }
+	#home_button { display:block; text-align:left; margin-left:1%; margin-top:1%; cursor:pointer; }
 
 	#home_button button { border:none; font-size:25px; cursor:pointer;}
 
