@@ -144,7 +144,6 @@
 
 			if(existing_team_id != undefined)
 			{
-				alert("Loading Existing Card");
 				Logger.log("Loading Existing Card");
 				load_url = "http://" + location.host + location.pathname + "?teamid=" + existing_team_id;
 				location.replace(load_url);
