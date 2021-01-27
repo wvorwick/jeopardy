@@ -19,8 +19,7 @@ function test_trello()
 		case "cards":
 			if(id != undefined)
 			{
-				MyTrello.list_id = id;
-				MyTrello.get_cards(print_data);
+				MyTrello.get_cards(id, print_data);
 			} else
 			{
 				alert("Need List ID for card");
@@ -56,8 +55,7 @@ function test_trello()
 		case "card-create":
 			if(id != undefined)
 			{
-				MyTrello.list_id = id;
-				MyTrello.create_card("Trello Testing", print_data);
+				MyTrello.create_card(id, "Trello Testing", print_data);
 			} else
 			{
 				alert("Need List ID");

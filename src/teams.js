@@ -13,16 +13,12 @@
 	function get_started_teams()
 	{
 
-		// // Make sure the page doesn't close once the game starts
-		// window.addEventListener("beforeunload", onClosePage);
-
 		// Check for existing player if on player screen
 		let path = location.pathname;
-		let query = location.search;
 
 		if (path.includes("/team"))
 		{
-			let query_map = get_query_map(query);
+			let query_map = mydoc.get_query_map();
 			if(query_map.hasOwnProperty("teamid"))
 			{
 				let card_id = query_map["teamid"]
@@ -31,40 +27,15 @@
 			else 
 			{
 				mydoc.show_section("enter_game_code_section");
-				// show_create_team_sections();
 			}
 		}
-		// // Authorize first
-		// let isAuthorized = MyTrello.authorizeTrello()
-
-		// if(isAuthorized)
-		// {
-		// 	// Hide the authentication section
-		// 	// mydoc.hide_section("authenticate_section");
-
-			
-		// }
 	}
 	
-	// Helper: Formats the query string to get any query srings
-	function get_query_map(query_string)
-	{
-		let query = query_string.replace("?", "")
-		var query_map = {}
-		var combos = query.split("&");
-		combos.forEach(function(obj)
-		{
-			let splits = obj.split("=");
-			query_map[splits[0]] = splits[1];
-		});
-		return query_map;
-	}
-
 	// Looks up the lists from the board and tries to find the one matching the given game code
 	function lookup_game()
 	{
 		let code_input = document.getElementById("player_game_code");
-		let code = code_input.value.toUpperCase();
+		let code = code_input.value;
 
 		MyTrello.get_lists(function(data)
 		{
@@ -75,7 +46,7 @@
 			response.forEach(function(obj)
 			{
 				let game_name = obj["name"];
-				if(game_name == code)
+				if(game_name.toUpperCase() == code.toUpperCase())
 				{
 					matching_list = obj["id"];
 				}
@@ -83,11 +54,9 @@
 
 			if (matching_list != undefined)
 			{
-				MyTrello.list_id = matching_list;
+				MyTrello.current_game_list_id = matching_list;
 				// trelloListId = matching_list;
-				console.log("List ID");
-				console.log(MyTrello.list_id );
-
+				Logger.log("Setting current team list ID: " + MyTrello.current_game_list_id);
 				disable_step_one();
 				mydoc.show_section("enter_team_name_section");
 			}
@@ -161,13 +130,13 @@
 		let existing_team_id = undefined;
 		
 		// Check for existing cards before creating a new card; Match on name
-		MyTrello.get_lists(function(data){
+		MyTrello.get_cards(MyTrello.current_game_list_id, function(data){
 
 			response = JSON.parse(data.responseText);
 			response.forEach(function(obj)
 			{
 				let card_name = obj["name"];
-				if (card_name == team_name)
+				if (card_name.toUpperCase() == team_name.toUpperCase())
 				{
 					existing_team_id = obj["id"];
 				}
@@ -175,6 +144,7 @@
 
 			if(existing_team_id != undefined)
 			{
+				alert("Loading Existing Card");
 				Logger.log("Loading Existing Card");
 				load_url = "http://" + location.host + location.pathname + "?teamid=" + existing_team_id;
 				location.replace(load_url);
@@ -182,7 +152,7 @@
 			else
 			{
 				Logger.log("Creating new card");
-				MyTrello.create_card(team_name, function(data)
+				MyTrello.create_card(MyTrello.current_game_list_id, team_name, function(data)
 				{
 					response = JSON.parse(data.responseText);
 					team_id = response["id"];

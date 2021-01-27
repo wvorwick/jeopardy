@@ -61,8 +61,8 @@ const MyTrello = {
 					},
 
 	// Create attachments on a card
-	create_attachment: function(card_id, data, successCallback){
-		let trello_path = `${this.endpoint}/lists/${this.list_id}/cards?key=${this.key}&token=${this.token}`;
+	create_attachment: function(listID, cardID, data, successCallback){
+		let trello_path = `${this.endpoint}/lists/${listID}/cards?key=${this.key}&token=${this.token}`;
 		myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});		
 	},
 	
@@ -74,8 +74,8 @@ const MyTrello = {
 				},
 
 	// Creates a new Trello Card
-	create_card: function(team_name, successCallback){
-					let params = `name=${team_name}&idList=${this.list_id}&pos=top`;
+	create_card: function(listID, team_name, successCallback){
+					let params = `name=${team_name}&idList=${listID}&pos=top`;
 					let trello_path = `${this.endpoint}/cards/?key=${this.key}&token=${this.token}&${params}`
 					myajax.AJAX({ method: "POST", path : trello_path, data:"", success: successCallback, failure : Logger.errorHandler});
 				},

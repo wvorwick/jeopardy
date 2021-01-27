@@ -12,6 +12,7 @@
 	var GAME_NAME  = "Home-made Jeopardy";
 	var GAME_MEDIA = {};
 	var IS_TEST_RUN = false;
+	var IS_FINAL_JEOPARDY = false;
 
 /********************************************************************************
 	GETTING STARTED
@@ -485,7 +486,7 @@
 	function onUpdateTurn()
 	{
 		numTeams  = teams_added.length;
-		if(numTeams > 0)
+		if(numTeams > 0 && !IS_FINAL_JEOPARDY)
 		{
 			Logger.log("Updating Turn");
 
@@ -509,8 +510,11 @@
 	//Show the Final Jeopardy section
 	function onShowFinalJeopardy()
 	{
-		// Hide these sections
 
+		// set final jeopardy;
+		IS_FINAL_JEOPARDY = true;
+
+		// Hide these sections
 		document.getElementById("round_1_row").classList.add("hidden");	
 		document.getElementById("current_turn_section").classList.add("hidden");	
 
@@ -566,7 +570,6 @@
 
 			// Selects a random player if one isn't already set; 
 			if(!isCurrentPlayerSet()){ onUpdateTurn(); }
-			// if(selectPlayer){ onUpdateTurn(true); }
 		});
 	}
 
