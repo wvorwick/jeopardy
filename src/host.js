@@ -499,8 +499,9 @@ var CURR_GAME_PASSWORD = "";
 			response = JSON.parse(data.responseText);
 			game_id = response["id"];
 
-			// Add the pass phrase as a comment
-			MyTrello.add_card_comment(game_id, pass_phrase);
+			// Add the pass to the custom field
+			MyTrello.update_card_custom_field(game_id,MyTrello.custom_field_phrase,pass_phrase)
+
 
 			setTimeout(function(){
 				load_url = "http://" + location.host + location.pathname.replace("create", "edit") + "?gameid=" + game_id;
