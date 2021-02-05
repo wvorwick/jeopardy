@@ -13,7 +13,9 @@
 	.save_button { background-color:limegreen; color:black; }
 	.test_button { background-color:orange; color:black; }
 	.play_button { background-color:#060CE9; color:yellow;}
-	.hyperlink { color:blue; }
+	.hyperlink { background-color:blue; color:white;}
+
+	.jeopardy_image{ max-width:95%; }
 	#homemade_jeopardy_title { text-decoration:underline; }
 
 /* HOME PAGE */

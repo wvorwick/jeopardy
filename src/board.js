@@ -384,9 +384,9 @@
 			});
 
 			// Attempt to set teamCode
-			if(isFinalJeopardy2())
+			if(IS_FINAL_JEOPARDY)
 			{
-				setWager(teamCode);			
+				getWagers(teamCode);			
 			}
 		}
 
@@ -831,6 +831,37 @@
 		return characters[randChar].toUpperCase();
 	}
 
+	function getWagers(teamCode, content="0")
+	{
+
+		let max = getMaxPossibleWager();
+		let teamWager = document.querySelector("span.team_wager[data-jpd-team-code='"+teamCode+"'"); // only used in final jeopardy
+		teamWager.classList.remove("hidden");
+		let wager_value = 0;
+
+		// Get the wager value from the wager field
+		MyTrello.get_card_custom_fields(teamCode, function(data){
+			response = JSON.parse(data.responseText);
+			response.forEach(function(obj){
+
+				let valueObject = obj["value"];
+				let is_wager_field = obj["idCustomField"] == MyTrello.custom_field_wager;
+				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+				
+				if(is_wager_field && value != "")
+				{
+					value = value.trim();
+					Logger.log("User wager: " + value);
+					let wagerValue = (!isNaN(Number(value))) ? Number(value) : 0;
+					Logger.log("Evaluated wager:" + wagerValue);
+					wagerValue = (wagerValue > max) ? max : wagerValue;
+					Logger.log("Final Wager Value: " + wagerValue);
+					teamWager.innerText = wagerValue;
+				}
+			});
+		});
+	}
+
  /* IS */
 	// check if a current player has been set
 	function isCurrentPlayerSet()
@@ -838,12 +869,12 @@
 		return (current_team_idx > -1);
 	}
 
-	function isFinalJeopardy2()
-	{
-		let row = document.getElementById("final_jeopardy_row");
-		let visible = !row.classList.contains("hidden");
-		return visible;
-	}
+	// function isFinalJeopardy2()
+	// {
+	// 	let row = document.getElementById("final_jeopardy_row");
+	// 	let visible = !row.classList.contains("hidden");
+	// 	return visible;
+	// }
 
 	function isReservedCode(code)
 	{
@@ -889,7 +920,7 @@
 
 		question_block.innerHTML = question;
 		answer_block.innerHTML = answer;
-		value_block.innerHTML = (isDailyDouble) ? 2 * value : isFinalJeopardy2() ? getMaxPossibleWager() : isNaN(value) ? "n/a" : value;
+		value_block.innerHTML = (isDailyDouble) ? 2 * value : IS_FINAL_JEOPARDY ? getMaxPossibleWager() : isNaN(value) ? "n/a" : value;
 	}
 
 	function loadTeamNamesInCorrectAnswerBlock()
@@ -930,41 +961,7 @@
 		}
 	}
 
-	function setWager(teamCode, content="0")
-	{
-		let max = getMaxPossibleWager();
-		let teamWager = document.querySelector("span.team_wager[data-jpd-team-code='"+teamCode+"'"); // only used in final jeopardy
-		teamWager.classList.remove("hidden");
-		let wager_value = 0;
 
-		MyTrello.get_card_actions(teamCode, function(data){
-			response = JSON.parse(data.responseText);
-
-			if (response.length > 0)
-			{
-				sorted = response.sort(function(a, b){
-					d1 = new Date(a["date"])
-					d2 = new Date(b["date"])
-					return d1 < d2
-				});
-
-				latest_comment = sorted[0];
-
-				wager_value = latest_comment.data.text;
-
-				let conversion = Number(wager_value);
-				let number = isNaN(conversion) ? "0" : conversion;
-
-				answer = number;
-				if (number > max)
-				{
-					answer = max;
-				}
-
-				teamWager.innerText = answer;
-			}
-		});
-	}
 
 
  /* UPDATE */
@@ -1035,7 +1032,7 @@
 		var correct = document.querySelectorAll(".correct_team"); // Get the list of teams that got it correct
 		var question_value = document.getElementById("value_block").innerText; // Get the value of the question
 
-		var isFinalUpdate = isFinalJeopardy2();
+		var isFinalUpdate = IS_FINAL_JEOPARDY;
 
 		for(var idx = 0; idx < correct.length; idx++)
 		{

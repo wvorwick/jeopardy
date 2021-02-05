@@ -52,6 +52,15 @@ function test_trello()
 				alert("Need Card ID");
 			}
 			break;
+		case "card-custom--fields":
+			if(id != undefined)
+			{
+				MyTrello.get_card_custom_fields(id, print_data);
+			} else
+			{
+				alert("Need Card ID");
+			}
+			break;
 		case "card-create":
 			if(id != undefined)
 			{
@@ -61,6 +70,7 @@ function test_trello()
 				alert("Need List ID");
 			}
 			break;
+
 		case "card-update":
 			if(id != undefined)
 			{

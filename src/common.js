@@ -17,13 +17,24 @@
 
 
 const Logger = { 
-	log: function(content){ 
-			console.log("LOGGER: " + content); 
-		},
+
+	logged_data: [],
+
+	log: function(content, printLog=false){ 
+		this.logged_data.push(content);
+		if(printLog){ this.print_logged_data()}
+	},
+
+	print_logged_data: function(){
+		logged_data.forEach(function(obj){
+			console.log(obj);
+		});
+	},
 	errorHandler: function(err){
 					console.log("ERROR");
 					console.log(err);
 				}
+
 }
 
 const mydoc = {
@@ -71,13 +82,41 @@ const mydoc = {
 const myajax = { 
 	
 	GetContentType: function(type){
+		var content_type = "";
 		switch(type){
 			case "JSON":
 			case "json":
-				return "application/json";
+				content_type = "application/json";
+				break;
+			case "Multipart Form Data":
+			case "Multipart":
+				content_type = "multipart/form-data";
+				break;
+			case "Text":
+			case "Plain Text":
+				content_type = "text/plain";
 			default:
-				return "text/plain";
+				break;
 		}
+		return content_type;
+	},
+
+	GetProperties: function(){
+		let properties = [
+			["method", "string", "The method of the call (GET, POST, PUT, DELTE)"],
+			["path", "string", "The path of the API call"],
+			["success", "function", "Custom function to call on successful call"],
+			["failure", "function", "Custom function to call on FAILED call"],
+			["data", "varied", "Custom data to send in PUT or POST"],
+			["contentType", "string", "A string to indicate what Content-type header should be set"],
+			["cacheControl", "string", "A string to determine the Cache-Control header"]
+		];
+		properties.forEach(function(obj){
+			name = obj[0];
+			type = obj[1];
+			desc = obj[2];
+			let message = `Property:\t${name}\nType:\t${type}\nDescription\t${desc}\n\n`;
+		});
 	},
 
 	isValidAjaxObject: function(object){
@@ -135,22 +174,19 @@ const myajax = {
 		}
 
 		// Send/proces the request
-		if ( object.hasOwnProperty("data_json") && object["datatype"] == "JSON" )
+		if ( object.hasOwnProperty("data") )
 		{
 			let data = object["data"];
-			xhttp.setRequestHeader('Content-type', 'application/json');
-			xhttp.send(data);
-		}
-		else if ( object.hasOwnProperty("data") )
-		{
-			let data = object["data"];
-			// let content_type = "application/x-www-form-urlencoded";
-			// if(object.hasOwnProperty("content_type"))
-			// {
-			// 	content_type = object["content_type"];
-			// 	data = JSON.stringify(data);
-			// }
-			// xhttp.setRequestHeader('Content-type', content_type);
+
+			// Check if content type is set
+			if(object.hasOwnProperty("contentType"))
+			{
+				let content_type = this.GetContentType( object["contentType"] );
+				if(content_type != "")
+				{
+					xhttp.setRequestHeader('Content-type', content_type);
+				}
+			}
 			xhttp.send(data);
 		}
 		else

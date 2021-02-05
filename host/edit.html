@@ -41,15 +41,16 @@
 				SAVE
 			</button>
 			<a id="test_game_button" href="" target="_blank">
-				<button id="save_game_button" class="button_mash test_button">
+				<button class="button_mash test_button">
 					TEST GAME
 				</button>
 			</a>
 			<a id="play_game_button" href="" target="_blank">
-				<button id="save_game_button" class="button_mash play_button">
+				<button class="button_mash play_button">
 					PLAY GAME
 				</button>
 			</a>
+			<br/>
 			<img id="saving_gif" class="hidden" src="../assets/img/loading1.gif" class="hidden" style="width:50px;height:50px;">
 			<span id="saving_results_section"></span>
 		</div>
@@ -66,11 +67,19 @@
 				<input id="game_pass_phrase" type="text" name="game_password" class="edit_game_value" placeholder="Enter password">
 			</div>
 			<div class="edit_game_subsection">
-				<h2>Spreadsheet URL</h2>
+				<h2>Published Sheet URL</h2>
 				<p>
 					Use the instructions in the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">Game Template</a> to setup your Game spreadsheet.<br/>Then, paste the published URL here. 
 				</p>
 				<textarea id="game_url_value" class="edit_game_value" placeholder="Paste the Published URL Here" style="width:100%;" rows="4"/></textarea>
+			</div>
+			<div class="edit_game_subsection">
+				<h2>Edit Sheet URL</h2>
+				<p>
+					This is the URL to the actual Google Sheet, so you can quickly edit it. 
+					<a id="go_to_edit_sheet" href="" class="hyperlink" target="_blank"></a> 
+				</p>
+				<textarea id="game_edit_sheet_value" class="edit_game_value" placeholder="Paste the Edit Sheet URL Here" style="width:100%;" rows="3"/></textarea>
 			</div>
 			<div class="edit_game_subsection">
 				<h2>Game Media</h2>

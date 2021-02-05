@@ -179,10 +179,17 @@
 
 	function submit_wager(card_id, wager)
 	{
-		MyTrello.add_card_comment(card_id, wager);
-		document.getElementById("submitted_wager_section").classList.remove("hidden");
-		document.getElementById("submitted_wager_value").innerText = wager;
-
+		if( !isNaN(Number(wager)))
+		{
+			// MyTrello.add_card_comment(card_id, wager);
+			MyTrello.update_card_custom_field(card_id,MyTrello.custom_field_wager, wager.toString() )
+			document.getElementById("submitted_wager_section").classList.remove("hidden");
+			document.getElementById("submitted_wager_value").innerText = wager;
+		}
+		else
+		{
+			alert("Invalid wager value! Please enter a number");
+		}
 	}
 
 

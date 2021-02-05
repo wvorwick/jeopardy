@@ -4,6 +4,7 @@
 var CURR_GAME_ID =  "";
 var CURR_GAME_NAME = "";
 var CURR_GAME_URL =  "";
+var CURR_SHEET_URL = "";
 var CURR_GAME_PASSWORD = "";
 
 /*********************************************************************************
@@ -146,28 +147,25 @@ var CURR_GAME_PASSWORD = "";
 
 	function validate_password(game_id, password, callback)
 	{
-		MyTrello.get_card_actions(game_id, function(data){
+
+		MyTrello.get_card_custom_fields(game_id, function(data){
 			response = JSON.parse(data.responseText);
-			failure = true;
-			if (response.length > 0)
-			{
-				sorted = response.sort(function(a, b){
-					d1 = new Date(a["date"])
-					d2 = new Date(b["date"])
-					return d1 < d2
-				});
 
-				latest_password = sorted[0];
-
-				valid_password = latest_password.data.text;
-
-				if(valid_password.toUpperCase() == password.toUpperCase())
+			failure = true;			
+			response.forEach(function(obj){
+				let valueObject = obj["value"];
+				let is_phrase_field = obj["idCustomField"] == MyTrello.custom_field_phrase;
+				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+				
+				if(is_phrase_field && value != "")
 				{
-					callback();
-
-					failure = false;;
+					if(value.toUpperCase() == password.toUpperCase())
+						{
+							failure = false;
+							callback();
+						}
 				}
-			}
+			});
 			if(failure)
 			{
 				toggle_loading_gif(true);
@@ -183,7 +181,6 @@ var CURR_GAME_PASSWORD = "";
 	HOST: EDITING EXISTING GAME
 **********************************************************************************/ 
 
-	// Happy Place
 	function delete_media(mediaID)
 	{
 		remove_existing_media_from_page(mediaID);
@@ -212,8 +209,9 @@ var CURR_GAME_PASSWORD = "";
 			document.getElementById("play_game_button").href = hrefPlay;
 
 			// Get password, and then callback to show game page
-			get_password(CURR_GAME_ID, show_game_page);
+			get_existing_password(CURR_GAME_ID, show_game_page);
 			get_existing_media(CURR_GAME_ID);
+			get_existing_edit_sheet_url(CURR_GAME_ID);
 			// show_game_page();
 		});
 	}
@@ -246,40 +244,84 @@ var CURR_GAME_PASSWORD = "";
 		});
 	}
 
-	function get_password(game_id, callback=undefined)
+	function get_existing_edit_sheet_url(card_id)
 	{
-		MyTrello.get_card_actions(game_id, function(data){
+		MyTrello.get_card_custom_fields(card_id, function(data){
 			response = JSON.parse(data.responseText);
 
-			if (response.length > 0)
-			{
-				sorted = response.sort(function(a, b){
-					d1 = new Date(a["date"])
-					d2 = new Date(b["date"])
-					return d1 < d2
-				});
-
-				latest_password = sorted[0];
-
-				CURR_GAME_PASSWORD = latest_password.data.text;
-
-				document.getElementById("game_pass_phrase").value = CURR_GAME_PASSWORD;
-			}
-			if(callback!=undefined)
-			{
-				callback();
-			}
+			response.forEach(function(obj){
+				let valueObject = obj["value"];
+				let is_sheet_field = obj["idCustomField"] == MyTrello.custom_field_sheet;
+				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+				
+				if(is_sheet_field && value != "")
+				{
+					CURR_SHEET_URL = value;
+					document.getElementById("game_edit_sheet_value").value = value;
+					document.getElementById("go_to_edit_sheet").href = value;
+					document.getElementById("go_to_edit_sheet").innerText = "Go to Edit Sheet";
+				}
+			});
 		});
+	}
+
+	function get_existing_password(game_id, callback=undefined)
+	{
+
+		MyTrello.get_card_custom_fields(game_id, function(data){
+			response = JSON.parse(data.responseText);
+
+			response.forEach(function(obj){
+				let valueObject = obj["value"];
+				let is_phrase_field = obj["idCustomField"] == MyTrello.custom_field_phrase;
+				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+				
+				if(is_phrase_field && value != "")
+				{
+					CURR_GAME_PASSWORD = value;
+					document.getElementById("game_pass_phrase").value = CURR_GAME_PASSWORD;
+				}
+
+				if(callback!=undefined)
+				{
+					callback();
+				}
+			});
+		});
+
+
+		// MyTrello.get_card_actions(game_id, function(data){
+		// 	response = JSON.parse(data.responseText);
+
+		// 	if (response.length > 0)
+		// 	{
+		// 		sorted = response.sort(function(a, b){
+		// 			d1 = new Date(a["date"])
+		// 			d2 = new Date(b["date"])
+		// 			return d1 < d2
+		// 		});
+
+		// 		latest_password = sorted[0];
+
+		// 		CURR_GAME_PASSWORD = latest_password.data.text;
+
+		// 		document.getElementById("game_pass_phrase").value = CURR_GAME_PASSWORD;
+		// 	}
+		// 	if(callback!=undefined)
+		// 	{
+		// 		callback();
+		// 	}
+		// });
 	}
 
 	function save_game()
 	{
-
 		// Get the elements
 		let save_button = document.getElementById("save_game_button");
 		let game_name = document.getElementById("game_name_value");
 		let game_password = document.getElementById("game_pass_phrase");
 		let game_url = document.getElementById("game_url_value");
+		let game_edit_url = document.getElementById("game_edit_sheet_value");
 
 		// Disable all inputs
 		save_button.disabled = true;
@@ -300,7 +342,8 @@ var CURR_GAME_PASSWORD = "";
 		// Only add a new password if different from the last
 		if( game_password.value != undefined && (CURR_GAME_PASSWORD != game_password.value))
 		{
-			MyTrello.add_card_comment(CURR_GAME_ID, game_password.value);
+			// MyTrello.add_card_comment(CURR_GAME_ID, game_password.value);
+			MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_phrase,game_password.value)
 			CURR_GAME_PASSWORD = game_password.value;
 		}
 
@@ -309,6 +352,12 @@ var CURR_GAME_PASSWORD = "";
 		{
 			MyTrello.update_card(CURR_GAME_ID, game_url.value);
 			CURR_GAME_URL = game_url.value;
+		}
+
+		if (game_edit_url.value != undefined && (CURR_SHEET_URL != game_edit_url.value))
+		{
+			MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_sheet,game_edit_url.value)
+			CURR_SHEET_URL = game_edit_url.value;			
 		}
 
 		setTimeout(function(){
@@ -324,7 +373,7 @@ var CURR_GAME_PASSWORD = "";
 
 
 /*********************************************************************************
-	HOST: EDITING EXISTING GAME (Editing DOM)
+	DOCUMENT OBJECT MODEL
 **********************************************************************************/ 
 
 	function add_existing_media_to_page(fileID, fileName, fileURL)

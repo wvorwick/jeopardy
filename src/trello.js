@@ -18,6 +18,10 @@ const MyTrello = {
 	test_list_id: "60115ebf2caf916afa9cc107",
 	admin_list_id: "6007bbc9ec73367514314430",
 
+	custom_field_wager: "601cde4a08d7193baa124fe8",
+	custom_field_sheet: "601cc5e0b397f3851991919a",
+	custom_field_phrase: "601ce8d93adeb806d0a28f38",
+
 	authorizeTrello: function(){ return true; },
 
 	/*** Admin Calls ***/
@@ -48,6 +52,9 @@ const MyTrello = {
 						let trello_path = `${this.endpoint}/cards/${card_id}/?key=${this.key}&token=${this.token}`;
 						myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
 					},
+
+
+
 	// Gets a single trello card's actions
 	get_card_actions: function(card_id, successCallback){
 						let trello_path = `${this.endpoint}/cards/${card_id}/actions/?key=${this.key}&token=${this.token}`;
@@ -56,9 +63,15 @@ const MyTrello = {
 
 	// Gets a single trello card's actions
 	get_card_attachments: function(card_id, successCallback){
-						let trello_path = `${this.endpoint}/cards/${card_id}/attachments/?key=${this.key}&token=${this.token}`;
-						myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
-					},
+		let trello_path = `${this.endpoint}/cards/${card_id}/attachments/?key=${this.key}&token=${this.token}`;
+		myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
+	},
+
+
+	get_card_custom_fields: function(card_id, successCallback){
+		let trello_path = `${this.endpoint}/cards/${card_id}/customFieldItems/?key=${this.key}&token=${this.token}`;
+		myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
+	},
 
 	// Create attachments on a card
 	create_attachment: function(cardID, fileData, successCallback){
@@ -97,6 +110,15 @@ const MyTrello = {
 		let param = `name=${new_name}`;
 		let trello_path = `${this.endpoint}/cards/${card_id}/?key=${this.key}&token=${this.token}&${param}`;
 		myajax.AJAX({ method: "PUT", path : trello_path, failure : Logger.errorHandler});
+	},
+
+	update_card_custom_field: function(card_id, field_id, new_value){
+		// var obj = `{ "value" : { "text" : "${new_value}" } }`;
+		var obj = { "value" : { "text" : new_value } };
+		// var encoded = encodeURIComponent(obj);
+		var encoded = JSON.stringify(obj)
+		let trello_path = `${this.endpoint}/cards/${card_id}/customField/${field_id}/item/?key=${this.key}&token=${this.token}`;
+		myajax.AJAX({ method: "PUT", path : trello_path, data:encoded, contentType:"JSON", failure : Logger.errorHandler});
 	},
 
 
