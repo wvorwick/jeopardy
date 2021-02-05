@@ -6,7 +6,12 @@
 	var JeopardyGame = undefined;
 	var CURR_GAME_ID = undefined;
 	var GAME_NAME  = "Home-made Jeopardy";
-	var GAME_MEDIA = {};
+	var GAME_MEDIA = 
+	{
+		"_daily_double_audio":"../assets/audio/daily_double.m4a",
+		"_daily_double_image":"../assets/img/daily_double.jpeg",
+
+	};
 	var QA_MAP = {};   //The Question-Answer map;
 	var IS_FINAL_JEOPARDY = false;
 	
@@ -642,29 +647,34 @@
 		Logger.log("Formatting content")
 
 		let content = "";
+		let new_line = "<br/>";
 
 		// Format the Image
 		if(obj.hasOwnProperty("image"))
 		{
-			content += formatImages(obj["image"])
+			let formattedImage = formatImages(obj["image"]);
+			content += (content != "" && formattedImage != "") ? (new_line + formattedImage) : formattedImage;
 		}
 
 		// Format the Audio
 		if(obj.hasOwnProperty("audio"))
 		{
-			content += formatAudio(obj["audio"]);
+			let formattedAudio = formatAudio(obj["audio"]);
+			content += (content != "" && formattedAudio != "") ? (new_line + formattedAudio) : formattedAudio;
 		}
 
 		// Format the Text
 		if(obj.hasOwnProperty("text"))
 		{
-			content += formatText(obj["text"]);
+			let formattedText = formatText(obj["text"]);
+			content += (content != "" && formattedText != "") ? (new_line + formattedText) : formattedText;
 		}
 
 		// Format the URLs
 		if(obj.hasOwnProperty("url"))
 		{
-			content += formatHyperlink(obj["url"])
+			let formattedURL = formatURL(obj["url"]);
+			content += (content != "" && formattedURL != "") ? (new_line + formattedURL) : formattedURL;
 		}
 
 		return content;
@@ -672,50 +682,62 @@
 
 	function formatText(value)
 	{
-		formatted = value.replaceAll("\\n", "<br/>");
-		return `<span>${formatted}</span>`
+		formatted = "";
+		value = value.trim();
+		Logger.log("Text value: " + value);
+
+
+		if(value.trim() != "")
+		{
+			let new_value = value.trim().replaceAll("\\n", "<br/>");
+			formatted = `<span>${new_value}</span>`
+		}
+		return formatted;
 	}
 
 	function formatImages(value)
 	{
-		Logger.log("Image value: " + value);
-
+		value = value.trim();
 		let image_path = getGameMediaURL(value);
+		Logger.log("Image value: " + value);
 
 		formatted = "";
 		if (value != "")
 		{
-			formatted = `<img src=\"${image_path}\" alt_text='Image'/><br/><br/>`;
+			formatted = `<img src=\"${image_path}\" alt_text='Image' class='jeopardy_image'/>`;
 		}
 		return formatted;
 	}
 
 	function formatAudio(value, isAutoPlay=false)
 	{
+		formatted = "";
+		value = value.trim();
 		Logger.log("Audio value: " + value);
 
 		let audio_path = getGameMediaURL(value);
 
-		formatted = "";
-		if (value != "")
+		if (value.trim() != "")
 		{
 			let autoplay = (isAutoPlay) ? " autoplay" : "";
 			let controls = (isAutoPlay) ? "" : " controls";
 			let audio_open = "<audio " + controls + autoplay + ">";
 			let audio_source  = `<source src=\"${audio_path}\" type='audio/mpeg'/>`;
-			let audio_close = "</audio><br/><br/>";
+			let audio_close = "</audio>";
 			formatted = audio_open + audio_source + audio_close;
 		}
 		return formatted;
 	}
 
-	function formatHyperlink(value)
+	function formatURL(value)
 	{
-		Logger.log("Hyperlink value: " + value);
 		formatted = "";
+		value = value.trim();
+		Logger.log("Hyperlink value: " + value);
+
 		if(value != "")
 		{
-			formatted = `<br/><a class='answer_link' href=\"${value}\" target='_blank'>${value}</a>`;
+			formatted = `<a class='answer_link' href=\"${value}\" target='_blank'>${value}</a>`;
 		}
 		return formatted;
 	}
@@ -736,8 +758,9 @@
 	{
 		Logger.log("Getting Daily Double Content");
 		let content = "";
-		content += formatAudio("../assets/audio/daily_double.m4a", true);
-		content += formatImages("../assets/img/daily_double.jpeg");
+		content += formatImages("_daily_double_image");
+		content += formatAudio("_daily_double_audio", true);
+		content += "<br/>";
 		return content;
 	}
 
