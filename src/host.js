@@ -200,8 +200,9 @@ var CURR_GAME_PASSWORD = "";
 			CURR_GAME_NAME = response["name"];
 			CURR_GAME_URL = response["desc"];
 
-			let path = "/board/?gameid=" + CURR_GAME_ID;
-			
+			let demoParam = (CURR_GAME_NAME.toUpperCase() == "DEMO") ? "&demo=1" : "";
+			let path = "/board/?gameid=" + CURR_GAME_ID + demoParam;
+
 			let hrefPlay = "http://" + location.host + location.pathname.replace("/host/edit.html",path);
 			let hrefTest = hrefPlay + "&test=1";
 
