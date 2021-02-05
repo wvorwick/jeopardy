@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Homemade Jeopardy - Play Game</title>
+<html>
+<head>
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../src/game.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="../src/game.css">
+</head>
+<body>
+
+	<div id="homemade_jeopardy_title" class="centered">
+		<h1 id="homemade_jeopardy_title">Homemade Jeopardy<br/>Play Game</h1>
+		<a id="home_button" href="../host/">
+      		<button class="fa fa-caret-square-o-left">&nbsp;Back</button>
+      	</a>
+		<hr/>
+	</div>
+
+	<div id="enter_game_name_section">
+		<div class="center_section_50 centered">
+			<h2>Game Name:</h2>
+			<p>Use this page to load the home-made Jeopardy game.</p>
+			<input id="game_name_to_load" type="text" name="game_name" placeholder="Enter the name of the game you want to play" class="input_mash">
+			<div style="margin-top:2%;">
+				<button id="load_test_game_button" class="button_mash" onclick="load_game_from_trello(true)">
+					TEST RUN GAME
+				</button>
+				<br/><br/>
+				<button id="load_game_button" class="button_mash" onclick="load_game_from_trello()">
+					PLAY GAME
+				</button>
+				<a id="hidden_link" href="" target="_blank"></a>
+			</div>
+			<br/>
+			<img id="loading_gif" class="hidden" src="../assets/img/loading1.gif" class="hidden" style="width:100px;height:100px;">
+			<p id="loading_results_section"></p>
+		</div>
+	</div>
+</body>
+	<!-- Common Code -->
+	<script src="../src/common.js"></script>
+	<!-- My Trello code -->
+	<script src="../src/trello.js"></script>
+	<!-- My Source JS -->
+	<script src="../src/host.js"></script>
+</html>

@@ -5,58 +5,60 @@
 	#home_button button { background-color:black; color:gray; }
 	.header { font-size:50px !important; }
 	.centered{ text-align:center;  }
-
+	.center_section_50 { width:50%; margin:auto; }
+	
 	.button_mash { font-size:140%; cursor:pointer;  }
+	.input_mash { width:80%; font-size:140%; text-align:center;  }
 
+	.save_button { background-color:limegreen; color:black; }
+	.test_button { background-color:orange; color:black; }
+	.play_button { background-color:#060CE9; color:yellow;}
 	.hyperlink { color:blue; }
-
 	#homemade_jeopardy_title { text-decoration:underline; }
-
-
 
 /* HOME PAGE */
 	#main_section { width:80%; margin:auto; text-align:center; font-size:120%; }
 	#main_section input {width:80%; font-size:140%; text-align:center; }
-
 	.identify_yourself { display:block; text-align:center; padding:2%; width:40%; margin:auto; cursor:pointer;
-							 background-color:lightgray; margin-bottom:2%;
-			 }
+							 background-color:lightgray; margin-bottom:2%; }
 	.identify_yourself:hover{background-color:blue; color:yellow; }
 
 /* ANSWERS PAGE*/
-	/*body { background-color:black; color:#F5F5F5; }*/
-	/*#main_section { width:80%; margin:auto; text-align:center; margin-top:3%; }*/
 	#team_code { color:orange; }
 	#game_code { color:orange; }
 	.submitted_answer{ color:limegreen; }
-	/*form input { font-size:140%; width:80%; }*/
-	/*form button { cursor:pointer; font-size:120%; }*/
 	#final_jeopardy_button { float:right; }
 	#final_jeopardy_block { margin-top:1%; margin-bottom:1%; }
-	/*.link { text-decoration:underline; color:white; cursor:pointer; }*/
-	/*a:visited { color:white; }*/
-	/*a:hover { color:orange; }*/
 
 
 /* Selecting Game*/
 	.game_option_label { border:1px solid black; display:inline-block; width:20%; padding:1%; cursor:pointer; text-align:center; margin-right:2%;}
 	.game_option_label:hover { background-color:lightgray; }
 
+/* ADMIN/HOST VIEW */
+	.edit_game_value { padding:1%; width:80%; }
+	#edit_game_section_table tbody td { padding-bottom:2%; }
+
+	.edit_game_subsection {border-bottom:2px solid white; padding:5%; padding-top:0%; }
+	#game_media a { color:lightblue; }
+	.delete_media { cursor:pointer; }
+	.delete_media:hover { color:red; }
+
 /* HOST Views*/
 	#host_instructions { text-align:left; }
 	#host_instructions li { margin-bottom:3%; }
 	#host_instructions a { color:blue; }
 
+/* CREATE GAME VIEW */
+	.create_game_section { width:70%; margin:auto; }
 
 /* MENU */
 	#menu { float:left; width:100%; border-bottom: 1px solid #F5F5F5; padding-bottom:1%; margin-bottom:2%; text-align:center; }
-	/*#menu h1 { width:100%; text-align:center; position:fixed; top:0; left:0; z-index:-100; }*/
 	#menu h1 { width:100%; text-align:center; margin-bottom:0%;}
-
 	.menu_button { float:right; margin-right:1%; margin-top:2%; cursor:pointer; }
 	#home_button { display:block; text-align:left; margin-left:1%; margin-top:1%; cursor:pointer; }
-
 	#home_button button { border:none; font-size:25px; cursor:pointer;}
+	#finalJeopardyButton{ float:right; cursor:pointer; font-size:100%; }
 
 /* RULES SECTION */
 	#rules_section { width:65%; margin:auto; }
@@ -68,62 +70,36 @@
 
 /* MAIN VIEW */
 	#main_view_section { padding-left:1%; padding-right:1%; display:relative; }
-
-
 	#loading_results_section {padding:2%; font-size:200%; color:red;}
 
 /* GAME BOARD */
 	#game_board { width:100%;margin-bottom:3%; }
-
 	.category { background-color:#060CE9; font-size:64px; cursor:pointer; }
 	.category_column { width:100%; }
 	.category_title { color:#F5F5F5; font-size:25px; height:100px;}
 	.category_option { color:yellow; text-align:center; font-weight:bolder; cursor:pointer;}
-
 	.final_jeopardy_row { display:block; width:50%;margin:auto; }
 	.final_jeopardy_row td { display:block; width:100%; }
 	.final_jeopardy_row td.category_option { padding-top:10%; padding-bottom:10%; }
 
-
-
 /* PRE-TEAMS SECTION */
-
 	.pre_team_block{ text-align:center; font-size:120%; }
 	.pre_team_block_value { background-color:blue;color:yellow;padding:1%; }
 
-	#finalJeopardyButton{ float:right; cursor:pointer; font-size:100%; }
-
-
 /* TEAMS SECTION */
-
-	/*#teams_section button {  font-size:120%; cursor:pointer; }*/
 	.teams_icons { cursor:pointer; }
-
 	#teams_table { width:60%; margin:auto; border-spacing:0px; text-align:left; }
-	/*#teams_table tr th { background-color:#060CE9; color:yellow; }*/
 	#teams_table tr th { background-color:#060CE9; color:#F5F5F5; }
-	
-
 	#teams_table tbody tr td{ border-bottom:2px solid white; border-top:2px solid white; }
 	.team_score { padding:1% }
 	.team_name { border-bottom:2px solid black; }
 
-	/*.team_score:after{ content:"1st"; color:red; font-size:120%; }*/
-
-
 	/* OLDER */
-
-
-
-
 	#teams_block { margin:60%;  margin:auto; border-top:1px solid white; padding-top:1%; }
-
 	.team_section { border:1px solid black; margin:auto; display:inline-block; margin-right:3%;}
 	.team_section h2 { margin-bottom: 0px; margin-top: 0px; }
 	.team_section textarea { resize:none; color:gray; font-style:italic; display:inline-block; width:90%; }
-	
 	.current_turn { border:5px solid green; }
-
 	.first_place { background-color:orange; color:black; }
 	.second_place { background-color:green; color:white; }
 	.third_place { background-color:maroon; color:white; }
@@ -133,28 +109,16 @@
 	#question_view { z-index:100; width:100%; position:fixed; bottom:0; top:0; background-color:#060CE9; color:#F5F5F5; text-align:center; overflow-y: scroll; }
 	#question_block { font-size:45px; width:55%; padding:3%; margin:auto; border:1px solid #F5F5F5; margin-bottom:1%; }
 	#answer_block { font-size:44px; width:35%; padding:2%; margin:auto; border:1px solid #F5F5F5; }
-
 	#time_view { width:45%; text-align:center; margin:auto; }
 	#time_view table {width: 100%;}
 	#timer_second { margin-right:2%; }
-
 	.timer_value { font-size:65px; }
 	.timer_buttons {  cursor:pointer; font-size:45px; }
-
 	#revealAnswerButton { font-size:15px; cursor:pointer; }
 	.answer_link { color:white; font-size:50%; }
-
-	/*#correct_block { position:fixed; text-align:left; left:20px; height:inherit; width:25%; }*/
-	/*#correct_block { float:left; text-align:left; left:20px; height:inherit; width:25%; clear:both; }*/
-
 	#correct_block table { width:55%; text-align:center; margin:auto; }
 	#correct_block table thead th { border-bottom: 2px solid white;}
-
 	#correct_block table input { font-size:140%; cursor:pointer; }
-	/*#correct_block table input:after { content:" Yes"; color:white;} */
-
 	#correct_block table tbody tr { border-bottom:1px solid black; } 
-	/*#correct-block table td:first { border-right:1px solid white;  }*/
-
 	#close_question_view { position:fixed; z-index:1000; top:0; left:0; width:10%; padding:1%; text-align:left; cursor:pointer; }
 

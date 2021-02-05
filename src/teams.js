@@ -1,18 +1,10 @@
 
-// const trelloBoardID = "5fdfd980e5fd1b0cd5218f6a";
-// var trelloListId = undefined;
-
-// var demo = document.getElementById("demo");
 
 /*********************************************************************************
 	PLAYER: GETTING STARTED
 **********************************************************************************/ 
 
-	document.addEventListener("DOMContentLoaded", get_started_teams);
-
-	function get_started_teams()
-	{
-
+	mydoc.ready(function(){
 		// Check for existing player if on player screen
 		let path = location.pathname;
 
@@ -29,7 +21,7 @@
 				mydoc.show_section("enter_game_code_section");
 			}
 		}
-	}
+	});
 	
 	// Looks up the lists from the board and tries to find the one matching the given game code
 	function lookup_game()
@@ -187,7 +179,7 @@
 
 	function submit_wager(card_id, wager)
 	{
-		MyTrello.update_card_wager(card_id, wager);
+		MyTrello.add_card_comment(card_id, wager);
 		document.getElementById("submitted_wager_section").classList.remove("hidden");
 		document.getElementById("submitted_wager_value").innerText = wager;
 

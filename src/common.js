@@ -144,13 +144,13 @@ const myajax = {
 		else if ( object.hasOwnProperty("data") )
 		{
 			let data = object["data"];
-			let content_type = "application/x-www-form-urlencoded";
-			if(object.hasOwnProperty("content_type"))
-			{
-				content_type = object["content_type"];
-				data = JSON.stringify(data);
-			}
-			xhttp.setRequestHeader('Content-type', content_type);
+			// let content_type = "application/x-www-form-urlencoded";
+			// if(object.hasOwnProperty("content_type"))
+			// {
+			// 	content_type = object["content_type"];
+			// 	data = JSON.stringify(data);
+			// }
+			// xhttp.setRequestHeader('Content-type', content_type);
 			xhttp.send(data);
 		}
 		else

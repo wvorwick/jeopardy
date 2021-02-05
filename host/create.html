@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home-made Jeopardy - Create Game</title>
 <html>
 <head>
-
 	<!-- jQuery library -->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
@@ -12,58 +12,49 @@
 	<link rel="stylesheet" type="text/css" href="../src/game.css">
 </head>
 <body>
-	<div id="main_section">
-		<h1 id="homemade_jeopardy_title">Homemade Jeopardy</h1>
 
-		<!-- Load Game Section -->
-		<div id="load_game_section">
-			<p>Use this page to load the home-made Jeopardy game.</p>
-			<h2>Step 1: Create a Game Sheet</h2>
-			<div style="width:50%; margin:auto;">
-				<ol id="host_instructions">
-					<li>
-						You should already have a game created in a Google Sheet.
-						<ul>
-							<li>
-								It should have the same columns as the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">game template</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						Ensure your Google Sheet is published to the web with document type = <strong>Tab-separated values (.tsv)</strong> 
-						<ul>
-							<li>You can publish the "Entire Document" as long as you have one sheet or the game sheet is the first sheet.</li>
-						</ul>
-					</li>
-				</ol>
-			</div>
-			<h2>Step 2: Save the Game Content</h2>
-			<div style="width:50%; margin:auto;">
-				<ol id="host_instructions">
-					<li>
-						You should already have a game created in a Google Sheet.
-						<ul>
-							<li>
-								It should have the same columns as the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">game template</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						Ensure your Google Sheet is published to the web with document type = <strong>Tab-separated values (.tsv)</strong> 
-						<ul>
-							<li>You can publish the "Entire Document" as long as you have one sheet or the game sheet is the first sheet.</li>
-						</ul>
-					</li>
-				</ol>
-			</div>
+	<div id="homemade_jeopardy_title" class="centered">
+		<a id="home_button" href="../host/">
+      		<button class="fa fa-caret-square-o-left">&nbsp;Back</button>
+      	</a>
+		<h1 id="homemade_jeopardy_title">Homemade Jeopardy<br/>Create Game</h1>
+		<hr/>
+	</div>
+
+	<div id="enter_game_name_section">
+		<div class="center_section_50 centered">
+			<h2>Game Name:</h2>
+			<input id="given_game_name" type="text" name="game_name" placeholder="Enter game name" class="input_mash">
+			<br/><br/>
+
+			<h2>Pass Phrase:</h2>
+			<input id="given_pass_phrase" type="text" name="game_password" placeholder="Enter a passpharse used to access your game" class="input_mash">
+			<br/><br/>
+			<button onclick="validate_new_game()" class="button_mash">Create Game</button>
+			<br/>
+			<img id="loading_gif" class="hidden" src="../assets/img/loading1.gif" class="hidden" style="width:100px;height:100px;">
+			<p id="loading_results_section"></p>
 		</div>
 	</div>
+
+
+	<!-- <div id="create_game_section" style="width:50%; margin:auto;text-align:left;">
+		<h2>Step 1: Create a Game Sheet</h2>
+		<p>
+			Use the instructions in the <a class="hyperlink" target="_blank" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vTwUkX8fG2cwDAI4M6AUx4AulguXYVaP277_tjxTS18trOlaBEes2ocR3UGBm_eRsAWShmI4gse7dk1/pubhtml" title="Game Template">Game Template</a> to setup your Game spreadsheet. 
+		</p>
+		<br/>						
+		<h2>Step 2: Create the Game</h2>
+		<p>Once you have your published Game spreadsheet URL, paste it below and click "Create Game"</p>
+		<input style="width:100%;" type="text" name="game_published_url" placeholder="Paste the Publish URL from your Game Spreadsheet">
+		<br/><br/>
+		<button>Create Game</button>
+	</div> -->
 </body>
 	<!-- Common Code -->
 	<script src="../src/common.js"></script>
 	<!-- My Trello code -->
 	<script src="../src/trello.js"></script>
 	<!-- My Source JS -->
-	<script src="../src/jeopardy.js"></script>
-	<script src="../src/board.js"></script>
+	<script src="../src/host.js"></script>
 </html>
