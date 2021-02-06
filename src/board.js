@@ -5,7 +5,10 @@
 
 	var JeopardyGame = undefined;
 	var CURR_GAME_ID = undefined;
+	var CURR_LIST_ID = undefined;
+	var CURR_GAME_CODE = "";
 	var GAME_NAME  = "Home-made Jeopardy";
+
 	var GAME_MEDIA = 
 	{
 		"_daily_double_audio":"../assets/audio/daily_double.m4a",
@@ -267,17 +270,23 @@
 		// Creates the game table
 		create_game_board();
 
-		mydoc.hide_section("load_game_section");
-		mydoc.hide_section("homemade_jeopardy_title");
+		// Show loading gif
 		toggle_loading_gif();
 
-		mydoc.show_section("game_section");
+		// Hide Content
+		mydoc.hideContent("#load_game_section");
+		mydoc.hideContent("#homemade_jeopardy_title");
 
+		// Show Content
+		mydoc.showContent("#game_section");
+
+		// Add listeners
 		addListenerCategoryClick();
 		addListenerQuestionClick();
 
-		// set the game code
+		// Set the game code
 		let game_code = getGameCode();
+		CURR_GAME_CODE = game_code;
 		document.getElementById("game_code").innerHTML = game_code;
 
 		// Set the appropriate list based on DEMO, TEST, or real game
@@ -292,6 +301,7 @@
 			MyTrello.create_list(game_code,function(data){
 				response = JSON.parse(data.responseText);
 				MyTrello.set_current_game_list(response["id"]);
+				CURR_LIST_ID = response["id"];
 				Logger.log("Current Game List ID: " + MyTrello.current_game_list_id);
 			});
 		}
@@ -354,6 +364,23 @@
 		resetAnswers(); // Reset the answers for each team.
 	}
 
+	// End the game and archive the list
+	function onEndGame()
+	{
+		let confirmAction = confirm("Would you like to end this game and archive it?");
+
+		if(confirmAction && !IS_TEST_RUN && !IS_DEMO_RUN)
+		{
+			// Set the list to archived; With updated name;
+			MyTrello.update_list_to_archive(CURR_LIST_ID, `${CURR_GAME_CODE} - ${GAME_NAME}` , function(){
+				alert("Game archived!");
+				mydoc.hideContent("#endGameButton");
+				mydoc.hideContent("#game_board_section");
+				mydoc.hideContent(".pre_team_block");
+			});
+		}
+	}
+
 
 	// Open up the selected question	
 	function onQuestionClick(event)
@@ -391,8 +418,8 @@
 		}
 
 		// Show the sections
-		mydoc.show_section("answer_block");
-		mydoc.show_section("correct_block");
+		mydoc.showContent("#answer_block");
+		mydoc.showContent("#correct_block");
 	}
 
 
@@ -402,14 +429,13 @@
 		// Sync teams before starting game; True to select random player as well
 		onSyncTeams(true);
 
-		// Hide These things:
-		mydoc.hide_section("rules_section");
-		// mydoc.hide_section("startGameButton");
+		// Hide Content
+		mydoc.hideContent("#rules_section");
 		
-		//  Show these things:
-		mydoc.show_section("teams_table");
-		mydoc.show_section("round_1_row");
-		mydoc.show_section("finalJeopardyButton");
+		//  Show Content
+		mydoc.showContent("#teams_table");
+		mydoc.showContent("#round_1_row");
+		mydoc.showContent("#finalJeopardyButton");
 
 		// Only used if multiple rounds are set;
 		let nextRound = document.getElementById("next_round");
@@ -451,28 +477,25 @@
 		// set final jeopardy;
 		IS_FINAL_JEOPARDY = true;
 
-		// Hide these sections
-		document.getElementById("round_1_row").classList.add("hidden");	
-		document.getElementById("current_turn_section").classList.add("hidden");	
+		// Hide Content
+		mydoc.hideContent("#round_1_row");
+		mydoc.hideContent("#round_2_row"); // Will hide round 2 if applicable;
+		mydoc.hideContent("#current_turn_section");
+		mydoc.hideContent("#time_view_regular");
+		mydoc.hideContent("#finalJeopardyButton");
 
-		let round2Row = document.getElementById("round_2_row");
-		if (round2Row != undefined){ round2Row.classList.add("hidden"); }
+		// Show Content
+		mydoc.showContent("#final_jeopardy_audio");
+		mydoc.showContent("#final_jeopardy_row");
+		mydoc.showContent("#highest_score_wager");
+		mydoc.showContent(".wager_row");
+		if(!IS_TEST_RUN && !IS_DEMO_RUN)
+		{
+			mydoc.showContent("#endGameButton")
+		}
 
-		// Hide these things
-		mydoc.hide_section("time_view_regular");
-		mydoc.show_section("final_jeopardy_audio");
-
-		// Show these things
-		mydoc.show_section("final_jeopardy_audio");
-
-		document.getElementById("final_jeopardy_row").classList.remove("hidden");
-		document.getElementById("final_jeopardy_row").classList.add("final_jeopardy_row");
-
-		document.getElementById("highest_score_wager").classList.remove("hidden");
-
-
-		let wagerCells = document.getElementsByClassName("wager_row");
-		for (let x = 0; x < wagerCells.length; x++) { wagerCells[x].classList.remove("hidden"); }
+		// Add Classes
+		mydoc.addClass("#final_jeopardy_row", "final_jeopardy_row");
 
 		var team_scores = document.querySelectorAll("span.team_score");
 		let highest_score  = (team_scores.length > 0) ? team_scores[0].innerText : "0";
@@ -619,11 +642,11 @@
 
 		if(isHidden)
 		{
-			mydoc.show_section("loading_gif");		
+			mydoc.showContent("#loading_gif");		
 		}
 		if(!isHidden || forceHide)
 		{
-			mydoc.hide_section("loading_gif");	
+			mydoc.hideContent("#loading_gif");	
 		}
 	}
 
@@ -869,13 +892,6 @@
 		return (current_team_idx > -1);
 	}
 
-	// function isFinalJeopardy2()
-	// {
-	// 	let row = document.getElementById("final_jeopardy_row");
-	// 	let visible = !row.classList.contains("hidden");
-	// 	return visible;
-	// }
-
 	function isReservedCode(code)
 	{
 		let reserved = ["DEMO", "TEST"];
@@ -953,7 +969,7 @@
 	{
 		if(idx != -1)
 		{
-			mydoc.show_section("current_turn_section");
+			mydoc.showContent("#current_turn_section");
 			nextTeam = teams_added[nextIdx];
 			document.getElementById("current_turn").innerText = nextTeam;
 			// Update the index for next iteration
@@ -1039,20 +1055,24 @@
 			let ele = correct[idx];
 			let teamCode = ele.getAttribute("data-jpd-team-code");
 
+			// Get team score from page
 			let team_score_value = document.querySelector("span.team_score[data-jpd-team-code='"+teamCode+"'");
 			let team_score = Number(team_score_value.innerText);
 
+			// Get team wager from page
 			let team_wager_value = document.querySelector("span.team_wager[data-jpd-team-code='"+teamCode+"'"); // only used in final jeopardy
 			let team_wager = Number(team_wager_value.innerText);
 
-			let points = (isFinalUpdate) ? team_wager : Number(question_value);
+			let points = (IS_FINAL_JEOPARDY) ? team_wager : Number(question_value);
 
 			if (ele.checked)
 			{
 				let new_score = team_score + points;
 				team_score_value.innerText = new_score;
+				// Update team score in trello
+				MyTrello.update_card_custom_field(teamCode,MyTrello.custom_field_score,new_score.toString());
 			} 
-			else if (isFinalUpdate && !ele.checked)
+			else if (IS_FINAL_JEOPARDY && !ele.checked)
 			{
 				let new_score = team_score - points;
 				team_score_value.innerText = new_score;
@@ -1061,19 +1081,4 @@
 		// updateLeader();
 		updateLeader();
 	}
-
-
-
-
-
- // Speech
-	// function speakText(message)
-	// {
-	// 	let synth = window.speechSynthesis;
-
-	// 	// https://dev.to/asaoluelijah/text-to-speech-in-3-lines-of-javascript-b8h
-	// 	var msg = new SpeechSynthesisUtterance();
-	// 	msg.text = message;
-	// 	synth.speak(msg);
-	// }
 

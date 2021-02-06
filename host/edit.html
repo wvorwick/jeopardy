@@ -13,10 +13,10 @@
 </head>
 <body>
 	<div id="homemade_jeopardy_title" class="centered">
+		<h1 id="homemade_jeopardy_title">Homemade Jeopardy<br/>Edit Game</h1>
 		<a id="home_button" href="../host/">
       		<button class="fa fa-caret-square-o-left">&nbsp;Back</button>
       	</a>
-		<h1 id="homemade_jeopardy_title">Homemade Jeopardy<br/>Edit Game</h1>
 		<hr/>
 	</div>
 	<div id="enter_game_name_section" class="hidden">
@@ -31,12 +31,10 @@
 			<button onclick="load_game()" class="button_mash">Edit Game</button>
 			<br/><br/>
 			<img id="loading_gif" class="hidden" src="../assets/img/loading1.gif" class="hidden" style="width:100px;height:100px;">
-			<p id="loading_results_section"></p>
 		</div>
 	</div>
-
 	<div id="edit_game_section" class="hidden">
-		<div class="center_section_50">
+		<div class="center_section_50 centered">
 			<button id="save_game_button" class="button_mash save_button" onclick="save_game()">
 				SAVE
 			</button>
@@ -63,7 +61,7 @@
 			</div>
 			<div class="edit_game_subsection">	
 				<h2>Pass Phrase</h2>
-				<p>Enter a pass phrase to use as the credentials to edit the game</p>
+				<p>This pass phrase is used to access this edit page; It is <strong>NOT</strong> needed to play the game</p>
 				<input id="game_pass_phrase" type="text" name="game_password" class="edit_game_value" placeholder="Enter password">
 			</div>
 			<div class="edit_game_subsection">
@@ -92,6 +90,9 @@
 				</form>
 			</div>
 		</div>
+	</div>
+	<div class="center_section_50 centered">
+		<p id="loading_results_section"></p>
 	</div>
 
 <!--  -->

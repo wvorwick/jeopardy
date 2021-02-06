@@ -22,14 +22,19 @@ const Logger = {
 
 	log: function(content, printLog=false){ 
 		this.logged_data.push(content);
-		if(printLog){ this.print_logged_data()}
+		if(printLog){ this.print_logged_data(content)}
 	},
 
-	print_logged_data: function(){
+	show_log: function(){
 		logged_data.forEach(function(obj){
 			console.log(obj);
 		});
 	},
+
+	print_logged_data: function(content){
+		console.log(content);
+	},
+
 	errorHandler: function(err){
 					console.log("ERROR");
 					console.log(err);
@@ -49,15 +54,23 @@ const mydoc = {
 		element.innerHTML = content;
 	},
 
-	// Show a section based on given ID
-	show_section: function(section_id){
-		document.getElementById(section_id).classList.remove("hidden");
+	// Show content based on query selector
+	showContent: function(selector){
+		this._toggleClass(selector, "remove", "hidden");
 	},
 
-	// Hide a section based on given ID
-	hide_section: function(section_id)
-	{
-		document.getElementById(section_id).classList.add("hidden");
+	// Hide based on query selector
+	hideContent: function(selector){
+		this._toggleClass(selector, "add", "hidden");
+	},
+
+	addClass: function(selector, className){
+		this._toggleClass(selector, "add", className);
+	},
+
+	removeClass: function(selector, className){
+		console.log(selector + " " + className);
+		this._toggleClass(selector, "remove", className);
 	},
 
 	get_query_map: function(){
@@ -72,12 +85,30 @@ const mydoc = {
 		});
 		return query_map;
 	},
-
-	get_form_data: function(formID){
-		var formElement = document.querySelector(`#${formID}`);
-		let formData = new FormData(formElement);
-		return formData;
-	},
+	
+	_toggleClass: function(selector, action, className){
+		try
+		{
+			let elements = Array.from(document.querySelectorAll(selector));
+			if(elements != undefined)
+			{
+				elements.forEach(function(obj){
+					if(action == "add")
+					{
+						obj.classList.add(className);
+					}
+					else if(action == "remove")
+					{
+						obj.classList.remove(className);
+					}
+				});
+			}
+		} 
+		catch(error)
+		{
+			Logger.log(error, true);
+		}
+	}
 };
 const myajax = { 
 	
@@ -138,6 +169,10 @@ const myajax = {
 		return state;
 	},
 
+	isValidFunction(obj, key){
+		return (obj.hasOwnProperty(key) && typeof(obj[key]) == "function");
+	},
+
 	AJAX: function(object){
 		let checkObject = myajax.isValidAjaxObject(object);
 		if (!checkObject.isValid){
@@ -148,8 +183,8 @@ const myajax = {
 		let method 	= object["method"];
 		let path 	= object["path"];
 
-		let success = object.hasOwnProperty("success") ? object["success"] : function(request){console.log(request);};
-		let failure = object.hasOwnProperty("failure") ? object["failure"] : function(request){console.log(request);};
+		let success = this.isValidFunction(object, "success") ? object["success"] : function(request){console.log(request);};
+		let failure = this.isValidFunction(object, "failure") ? object["failure"] : function(request){console.log(request);};
 
 		// Setting up the request object
 		var xhttp = new XMLHttpRequest();

@@ -60,7 +60,7 @@
 	.menu_button { float:right; margin-right:1%; margin-top:2%; cursor:pointer; }
 	#home_button { display:block; text-align:left; margin-left:1%; margin-top:1%; cursor:pointer; }
 	#home_button button { border:none; font-size:25px; cursor:pointer;}
-	#finalJeopardyButton{ float:right; cursor:pointer; font-size:100%; }
+	#finalJeopardyButton{ float:right; cursor:pointer; }
 
 /* RULES SECTION */
 	#rules_section { width:65%; margin:auto; }

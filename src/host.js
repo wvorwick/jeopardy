@@ -4,7 +4,8 @@
 var CURR_GAME_ID =  "";
 var CURR_GAME_NAME = "";
 var CURR_GAME_URL =  "";
-var CURR_SHEET_URL = "";
+var CURR_EDIT_SHEET_URL = "";
+var CURR_PUB_SHEET_URL = "";
 var CURR_GAME_PASSWORD = "";
 
 /*********************************************************************************
@@ -27,7 +28,7 @@ var CURR_GAME_PASSWORD = "";
 			} 
 			else 
 			{
-				mydoc.show_section("enter_game_name_section");
+				mydoc.showContent("#enter_game_name_section");
 			}
 		}
 
@@ -101,9 +102,9 @@ var CURR_GAME_PASSWORD = "";
 	// Looks up the lists from the board and tries to find the one matching the given game code
 	function load_game()
 	{
-		// Start loading GIF and clear results (if any);
+		// Start Clear results if any & load GIF
+		set_loading_results("");
 		toggle_loading_gif();
-		document.getElementById("loading_results_section").innerText = "";
 
 		let game_name_ele = document.getElementById("given_game_name");
 		let given_name = game_name_ele.value;
@@ -130,16 +131,16 @@ var CURR_GAME_PASSWORD = "";
 
 				CURR_GAME_ID = matching_game_id;
 				validate_password(matching_game_id,given_password, function(){
-					// mydoc.show_section("enter_team_name_section");
 					load_url = "http://" + location.host + location.pathname + "?gameid=" + CURR_GAME_ID;
 					location.replace(load_url);
 				});
 			}
 			else 
 			{
-				toggle_loading_gif(true);
+				// toggle_loading_gif(true);
 				result = "Could not find a game with the given name!";
-				document.getElementById("loading_results_section").innerText = result;
+				set_loading_results(result);
+				// document.getElementById("loading_results_section").innerText = result;
 			}
 		});
 	}
@@ -168,9 +169,10 @@ var CURR_GAME_PASSWORD = "";
 			});
 			if(failure)
 			{
-				toggle_loading_gif(true);
+				// toggle_loading_gif(true);
 				result = "Invalid credentials for this game";
-				document.getElementById("loading_results_section").innerText = result;
+				set_loading_results(result);
+				// document.getElementById("loading_results_section").innerText = result;
 			}
 		});
 	}
@@ -193,28 +195,44 @@ var CURR_GAME_PASSWORD = "";
 	// Loads existing team if card ID was already included or found
 	function get_existing_game(card_id)
 	{
-		MyTrello.get_single_card(card_id, function(data){
-			response = JSON.parse(data.responseText);
-			
-			CURR_GAME_ID = response["id"];
-			CURR_GAME_NAME = response["name"];
-			CURR_GAME_URL = response["desc"];
+		try
+		{
+			MyTrello.get_single_card(card_id, function(data){
 
-			let demoParam = (CURR_GAME_NAME.toUpperCase() == "DEMO") ? "&demo=1" : "";
-			let path = "/board/?gameid=" + CURR_GAME_ID + demoParam;
+				response = JSON.parse(data.responseText);
+				console.log(response);
+				
 
-			let hrefPlay = "http://" + location.host + location.pathname.replace("/host/edit.html",path);
-			let hrefTest = hrefPlay + "&test=1";
+				CURR_GAME_ID = response["id"];
+				CURR_GAME_NAME = response["name"];
+				CURR_GAME_URL = response["desc"];
 
-			document.getElementById("test_game_button").href = hrefTest;
-			document.getElementById("play_game_button").href = hrefPlay;
+				// Set the current game name;
+				document.getElementById("game_name_value").value = CURR_GAME_NAME;
 
-			// Get password, and then callback to show game page
-			get_existing_password(CURR_GAME_ID, show_game_page);
-			get_existing_media(CURR_GAME_ID);
-			get_existing_edit_sheet_url(CURR_GAME_ID);
-			// show_game_page();
-		});
+				// Determine if this should be a DEMO link
+				let demoParam = (CURR_GAME_NAME.toUpperCase() == "DEMO") ? "&demo=1" : "";
+
+				// Get password, and then callback to show game page
+				get_existing_password(CURR_GAME_ID);
+				get_existing_media(CURR_GAME_ID);
+				get_existing_edit_sheet_url(CURR_GAME_ID);
+				get_existing_published_sheet_url(CURR_GAME_ID, demoParam);
+
+				// Adjust visibility of sections
+				mydoc.hideContent("#enter_game_name_section");
+				mydoc.showContent("#edit_game_section");
+				
+			}, function(data){
+				result = "Sorry, could not load game. Invalid ID!";
+				set_loading_results(result);
+			});
+		}
+		catch(error)
+		{
+			set_loading_results("Something went wrong:<br/>" + error);
+		}
+		
 	}
 
 	function get_existing_media(card_id)
@@ -245,6 +263,32 @@ var CURR_GAME_PASSWORD = "";
 		});
 	}
 
+	function get_existing_published_sheet_url(card_id, demoParam="")
+	{
+		MyTrello.get_card_custom_fields(card_id, function(data){
+			response = JSON.parse(data.responseText);
+
+			response.forEach(function(obj){
+				let valueObject = obj["value"];
+				let is_published_field = obj["idCustomField"] == MyTrello.custom_field_pub_url;
+				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+			
+				if(is_published_field && value != "")
+				{
+
+					CURR_PUB_SHEET_URL = value;
+					document.getElementById("game_url_value").value = value;
+
+					let path = "/board/?gameid=" + card_id + demoParam;
+					let hrefPlay = "http://" + location.host + location.pathname.replace("/host/edit.html",path);
+					let hrefTest = hrefPlay + "&test=1";
+					document.getElementById("test_game_button").href = hrefTest;
+					document.getElementById("play_game_button").href = hrefPlay;
+				}
+			});
+		});
+	}
+
 	function get_existing_edit_sheet_url(card_id)
 	{
 		MyTrello.get_card_custom_fields(card_id, function(data){
@@ -252,12 +296,12 @@ var CURR_GAME_PASSWORD = "";
 
 			response.forEach(function(obj){
 				let valueObject = obj["value"];
-				let is_sheet_field = obj["idCustomField"] == MyTrello.custom_field_sheet;
+				let is_sheet_field = obj["idCustomField"] == MyTrello.custom_field_edit_url;
 				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
 				
 				if(is_sheet_field && value != "")
 				{
-					CURR_SHEET_URL = value;
+					CURR_EDIT_SHEET_URL = value;
 					document.getElementById("game_edit_sheet_value").value = value;
 					document.getElementById("go_to_edit_sheet").href = value;
 					document.getElementById("go_to_edit_sheet").innerText = "Go to Edit Sheet";
@@ -289,88 +333,66 @@ var CURR_GAME_PASSWORD = "";
 				}
 			});
 		});
-
-
-		// MyTrello.get_card_actions(game_id, function(data){
-		// 	response = JSON.parse(data.responseText);
-
-		// 	if (response.length > 0)
-		// 	{
-		// 		sorted = response.sort(function(a, b){
-		// 			d1 = new Date(a["date"])
-		// 			d2 = new Date(b["date"])
-		// 			return d1 < d2
-		// 		});
-
-		// 		latest_password = sorted[0];
-
-		// 		CURR_GAME_PASSWORD = latest_password.data.text;
-
-		// 		document.getElementById("game_pass_phrase").value = CURR_GAME_PASSWORD;
-		// 	}
-		// 	if(callback!=undefined)
-		// 	{
-		// 		callback();
-		// 	}
-		// });
 	}
 
+	// Handler for saving the game components
 	function save_game()
 	{
-		// Get the elements
+		// Disable the save button
 		let save_button = document.getElementById("save_game_button");
-		let game_name = document.getElementById("game_name_value");
-		let game_password = document.getElementById("game_pass_phrase");
-		let game_url = document.getElementById("game_url_value");
-		let game_edit_url = document.getElementById("game_edit_sheet_value");
-
-		// Disable all inputs
 		save_button.disabled = true;
-		game_name.disabled = true;
-		game_password.disabled = true;
-		game_url.disabled = true;
 
 		// Show the loading GIF
 		toggle_saving_gif();
 
-		// Update name if it is set & 
-		if(game_name.value != undefined && (CURR_GAME_NAME != game_name.value))
-		{
-			MyTrello.update_card_name(CURR_GAME_ID, game_name.value);
-			CURR_GAME_NAME = game_name.value;
-		}
-
-		// Only add a new password if different from the last
-		if( game_password.value != undefined && (CURR_GAME_PASSWORD != game_password.value))
-		{
-			// MyTrello.add_card_comment(CURR_GAME_ID, game_password.value);
-			MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_phrase,game_password.value)
-			CURR_GAME_PASSWORD = game_password.value;
-		}
-
-		// Update the game URL (i.e. the description)
-		if( game_url.value != undefined && (CURR_GAME_URL != game_url.value))
-		{
-			MyTrello.update_card(CURR_GAME_ID, game_url.value);
-			CURR_GAME_URL = game_url.value;
-		}
-
-		if (game_edit_url.value != undefined && (CURR_SHEET_URL != game_edit_url.value))
-		{
-			MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_sheet,game_edit_url.value)
-			CURR_SHEET_URL = game_edit_url.value;			
-		}
+		// Save the different components
+		save_game_component("GameName", CURR_GAME_NAME, "game_name_value");
+		save_game_component("PassPhrase", CURR_GAME_PASSWORD, "game_pass_phrase");
+		save_game_component("PublishedSheetURL", CURR_PUB_SHEET_URL, "game_url_value");
+		save_game_component("EditSheetURL", CURR_EDIT_SHEET_URL, "game_edit_sheet_value");
 
 		setTimeout(function(){
 			save_button.disabled = false;
-			game_name.disabled = false;
-			game_password.disabled = false;
-			game_url.disabled = false;
-
 			toggle_saving_gif(true);
 		}, 2000);
 	}
 
+
+	// Save an individual game component, based on passed in values
+	function save_game_component(componentName, currValue, fieldID)
+	{
+
+		let element = document.getElementById(fieldID);
+		let isDiffValue = (element != undefined && element.value != undefined && (currValue != element.value));
+
+		if(isDiffValue)
+		{
+			let new_value = element.value.trim();
+
+			switch(componentName)
+			{
+				case "GameName":
+					MyTrello.update_card_name(CURR_GAME_ID, new_value);
+					CURR_GAME_NAME = new_value;
+					break;
+				case "PassPhrase":
+					MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_phrase,new_value);
+					CURR_GAME_PASSWORD = new_value;
+					break;
+				case "PublishedSheetURL":
+					MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_pub_url,new_value);
+					CURR_PUB_SHEET_URL = new_value;
+					break;
+				case "EditSheetURL":
+					MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_edit_url,new_value);
+					CURR_EDIT_SHEET_URL = new_value;
+					break;
+				default:
+					Logger.log("Saving Game Component: NO COMPONENT FOUND WITH NAME: " + componentName);
+					break;
+			}
+		}
+	}
 
 
 /*********************************************************************************
@@ -407,11 +429,11 @@ var CURR_GAME_PASSWORD = "";
 
 		if(isHidden)
 		{
-			mydoc.show_section("loading_gif");		
+			mydoc.showContent("#loading_gif");		
 		}
 		if(!isHidden || forceHide)
 		{
-			mydoc.hide_section("loading_gif");	
+			mydoc.hideContent("#loading_gif");	
 		}
 	}
 
@@ -423,11 +445,11 @@ var CURR_GAME_PASSWORD = "";
 
 		if(isHidden)
 		{
-			mydoc.show_section("saving_gif");		
+			mydoc.showContent("#saving_gif");		
 		}
 		if(!isHidden || forceHide)
 		{
-			mydoc.hide_section("saving_gif");	
+			mydoc.hideContent("#saving_gif");	
 		}
 	}
 
@@ -435,7 +457,7 @@ var CURR_GAME_PASSWORD = "";
 	{
 		toggle_loading_gif(true);
 		let section = document.getElementById("loading_results_section");
-		section.innerText = value;
+		section.innerHTML = value;
 	}
 
 
@@ -447,7 +469,8 @@ var CURR_GAME_PASSWORD = "";
 	function validate_new_game()
 	{
 		Logger.log("Create Game");
-		document.getElementById("loading_results_section").innerText = "";
+		set_loading_results("");
+		// document.getElementById("loading_results_section").innerText = "";
 
 		toggle_loading_gif();
 
@@ -478,8 +501,9 @@ var CURR_GAME_PASSWORD = "";
 				else
 				{
 					results = "Cannot Use This Game Name!<br/> Name Already Exists!";
-					document.getElementById("loading_results_section").innerHTML = results;
-					toggle_loading_gif(true);
+					set_loading_results(results);
+					// document.getElementById("loading_results_section").innerHTML = results;
+					// toggle_loading_gif(true);
 
 				}
 			});
@@ -487,8 +511,9 @@ var CURR_GAME_PASSWORD = "";
 		else
 		{
 			results = "Please enter a game name and a pass phrase!";
-			document.getElementById("loading_results_section").innerHTML = results;
-			toggle_loading_gif(true);
+			set_loading_results(results);
+			// document.getElementById("loading_results_section").innerHTML = results;
+			// toggle_loading_gif(true);
 		}	
 	}
 
@@ -537,29 +562,4 @@ var CURR_GAME_PASSWORD = "";
 			});
 		}		
 	}
-
-/*********************************************************************************
-	SECTION VISIBILITY 
-**********************************************************************************/ 
-
-	// Shows the section for submitting answers
-	function show_game_page()
-	{
-		// Set Team Identifiers
-		document.getElementById("game_name_value").value = CURR_GAME_NAME;
-		document.getElementById("game_url_value").value = CURR_GAME_URL;
-
-		// First, hide starter sects
-		mydoc.hide_section("enter_game_name_section");
-
-		// Show the section to enter answers
-		mydoc.show_section("edit_game_section");
-	}
-
-
-/*********************************************************************************
-	EDIT GAME ACTIONS
-**********************************************************************************/ 
-
-	
 

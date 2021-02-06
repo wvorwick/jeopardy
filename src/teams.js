@@ -18,7 +18,7 @@
 			} 
 			else 
 			{
-				mydoc.show_section("enter_game_code_section");
+				mydoc.showContent("#enter_game_code_section");
 			}
 		}
 	});
@@ -46,11 +46,10 @@
 
 			if (matching_list != undefined)
 			{
-				MyTrello.current_game_list_id = matching_list;
-				// trelloListId = matching_list;
+				MyTrello.set_current_game_list(matching_list);
 				Logger.log("Setting current team list ID: " + MyTrello.current_game_list_id);
 				disable_step_one();
-				mydoc.show_section("enter_team_name_section");
+				mydoc.showContent("#enter_team_name_section");
 			}
 			else 
 			{
@@ -92,18 +91,17 @@
 		document.getElementById("team_card_id").value = team_id;
 
 		// First, hide starter sects
-		mydoc.hide_section("enter_game_code_section");
-		mydoc.hide_section("enter_team_name_section");
+		mydoc.hideContent("#enter_game_code_section");
+		mydoc.hideContent("#enter_team_name_section");
 
 		// Show the section to enter answers
-		mydoc.show_section("enter_answers_section");
+		mydoc.showContent("#enter_answers_section");
 	}
 
 	function onFinalJeopardy()
 	{
-		mydoc.hide_section("show_wager_link");
-		mydoc.show_section("wager" );
-		// document.getElementById("wager").classList.remove("hidden");
+		mydoc.hideContent("#show_wager_link");
+		mydoc.showContent("#wager" );
 	}
 
 /*********************************************************************************
@@ -114,7 +112,7 @@
 	{
 		// Disable the button and show loading gif;
 		document.getElementById("create_team_button").disabled = true;
-		mydoc.show_section("loading_gif");
+		mydoc.showContent("#loading_gif");
 
 		let team_input = document.getElementById("team_name");
 		let team_name = team_input.value;
@@ -181,7 +179,6 @@
 	{
 		if( !isNaN(Number(wager)))
 		{
-			// MyTrello.add_card_comment(card_id, wager);
 			MyTrello.update_card_custom_field(card_id,MyTrello.custom_field_wager, wager.toString() )
 			document.getElementById("submitted_wager_section").classList.remove("hidden");
 			document.getElementById("submitted_wager_value").innerText = wager;
