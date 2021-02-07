@@ -73,6 +73,26 @@ const mydoc = {
 		this._toggleClass(selector, "remove", className);
 	},
 
+	isValidValue : function(value)
+	{
+		let isValid = false;
+		switch(typeof(value))
+		{
+			case "number":
+				isValid = ( !isNaN(Number(value)) );
+				break;
+			case "string":
+				isValid = (value != undefined && value != "");
+				break;
+			case "function":
+				isValid = (typeof(value) == "function")
+				break;
+			default:
+				isValid = false;
+		}
+		return isValid;
+	},
+
 	get_query_map: function(){
 		let query_string = location.search;
 		let query = query_string.replace("?", "")
@@ -148,6 +168,19 @@ const myajax = {
 			desc = obj[2];
 			let message = `Property:\t${name}\nType:\t${type}\nDescription\t${desc}\n\n`;
 		});
+	},
+
+	GetJSON: function(jsonString){
+		try
+		{
+			let jsonObject = JSON.parse(jsonString);
+			return jsonObject
+		}
+		catch(error)
+		{
+			Logger.log(error, true);
+			return undefined;
+		}
 	},
 
 	isValidAjaxObject: function(object){

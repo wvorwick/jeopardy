@@ -6,9 +6,13 @@
 	.header { font-size:50px !important; }
 	.centered{ text-align:center;  }
 	.center_section_50 { width:50%; margin:auto; }
+	.center_section_60 { width:60%; margin:auto; }
+	.center_section_70 { width:70%; margin:auto; }
+	.center_section_80 { width:80%; margin:auto; }
 	
 	.button_mash { font-size:140%; cursor:pointer;  }
 	.input_mash { width:80%; font-size:140%; text-align:center;  }
+	.pointer { cursor:pointer }
 
 	.save_button { background-color:limegreen; color:black; }
 	.test_button { background-color:orange; color:black; }
@@ -17,6 +21,7 @@
 
 	.jeopardy_image{ max-width:95%; }
 	#homemade_jeopardy_title { text-decoration:underline; }
+
 
 /* HOME PAGE */
 	#main_section { width:80%; margin:auto; text-align:center; font-size:120%; }
@@ -46,6 +51,11 @@
 	.delete_media { cursor:pointer; }
 	.delete_media:hover { color:red; }
 
+	.rule_input { width:100%; }
+	.rule_delete { float:right; clear:both; color:red; cursor:pointer; font-size:200%;}
+	.rule_entry { margin-bottom:2%; padding:2%; border:1px dashed white; }
+	#type_of_rules { color:red; text-decoration:underline; }
+	.rule_builtin_note { color:red; font-style:italic; }
 /* HOST Views*/
 	#host_instructions { text-align:left; }
 	#host_instructions li { margin-bottom:3%; }
@@ -63,12 +73,9 @@
 	#finalJeopardyButton{ float:right; cursor:pointer; }
 
 /* RULES SECTION */
-	#rules_section { width:65%; margin:auto; }
 	#rules_section h1 { text-align: center; }
-	#rules_section ol { padding-left:25%;}
-	#rules_section li { font-size:120%; }
-	#rules_section strong { color:darkorange; }
-	#rules_section button { font-size:120%; cursor:pointer; }
+	#rules_section .rule_item { margin-bottom:5%; font-size:120%;}
+	#rules_section .rule { color:darkorange;  }
 
 /* MAIN VIEW */
 	#main_view_section { padding-left:1%; padding-right:1%; display:relative; }

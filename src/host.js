@@ -3,10 +3,12 @@
 
 var CURR_GAME_ID =  "";
 var CURR_GAME_NAME = "";
-var CURR_GAME_URL =  "";
 var CURR_EDIT_SHEET_URL = "";
 var CURR_PUB_SHEET_URL = "";
 var CURR_GAME_PASSWORD = "";
+
+var CURR_GAME_RULES =  undefined;
+var USE_DEFAULT_RULES = true;
 
 /*********************************************************************************
 	HOST: ON PAGE LOAD
@@ -146,6 +148,7 @@ var CURR_GAME_PASSWORD = "";
 	}
 
 
+	// Validate the password
 	function validate_password(game_id, password, callback)
 	{
 
@@ -177,12 +180,11 @@ var CURR_GAME_PASSWORD = "";
 		});
 	}
 
-
-
 /*********************************************************************************
 	HOST: EDITING EXISTING GAME
 **********************************************************************************/ 
 
+	// Delete the media
 	function delete_media(mediaID)
 	{
 		remove_existing_media_from_page(mediaID);
@@ -192,6 +194,43 @@ var CURR_GAME_PASSWORD = "";
 		});
 	}
 
+	// Format the game settings for 
+	function formatSetting(settingObj)
+	{
+		let name = settingObj["name"];
+		let type = Settings.GetSettingType(name);
+		let builtin = settingObj["builtin"];
+		let options = settingObj["options"];
+
+		let disabledFlag = (builtin) ? "disabled" : "";
+
+		// The elements
+		let inputElement = "";
+
+		if(type == "select")
+		{
+			let optionElements = ""
+			options.forEach(function(value){
+				optionElements += `<option value="${value}">${value}</option>`
+			});	
+			inputElement = `<select id="${name}" ${disabledFlag}>
+								${optionElements}
+							</select>`
+		}
+		else if (type == "number")
+		{
+			inputElement = `<input id="${name}" type="number" name="" ${disabledFlag}>`;
+		}
+
+		let row = `<tr>
+						<th>${name}</th>
+						<td>${inputElement}</td>
+					</tr>`;
+
+		return row;
+	}
+
+
 	// Loads existing team if card ID was already included or found
 	function get_existing_game(card_id)
 	{
@@ -200,15 +239,17 @@ var CURR_GAME_PASSWORD = "";
 			MyTrello.get_single_card(card_id, function(data){
 
 				response = JSON.parse(data.responseText);
-				console.log(response);
 				
-
+				// Set the current game ID
 				CURR_GAME_ID = response["id"];
-				CURR_GAME_NAME = response["name"];
-				CURR_GAME_URL = response["desc"];
 
 				// Set the current game name;
+				CURR_GAME_NAME = response["name"];
 				document.getElementById("game_name_value").value = CURR_GAME_NAME;
+
+				// Set the current game rules
+				CURR_GAME_RULES = myajax.GetJSON(response["desc"]);
+				loadGameSettings(CURR_GAME_RULES);
 
 				// Determine if this should be a DEMO link
 				let demoParam = (CURR_GAME_NAME.toUpperCase() == "DEMO") ? "&demo=1" : "";
@@ -231,8 +272,7 @@ var CURR_GAME_PASSWORD = "";
 		catch(error)
 		{
 			set_loading_results("Something went wrong:<br/>" + error);
-		}
-		
+		}		
 	}
 
 	function get_existing_media(card_id)
@@ -335,6 +375,27 @@ var CURR_GAME_PASSWORD = "";
 		});
 	}
 
+	// Load the game settings
+	function loadGameSettings(settingJSON=undefined)
+	{
+		// Setup the setting fields on the page
+		let setting_rows = "";
+		Settings.settingOptions.forEach(function(obj){
+			setting_rows += formatSetting(obj);
+		});
+		document.getElementById("settings_table_body").innerHTML = setting_rows;
+
+
+		// Get the current settings
+		let settings = Settings.GetSettings(settingJSON);
+		settings.forEach(function(obj){
+			name = obj["name"];
+			value = obj["value"];
+
+			document.getElementById(name).value = value;
+		});
+	}
+
 	// Handler for saving the game components
 	function save_game()
 	{
@@ -350,13 +411,13 @@ var CURR_GAME_PASSWORD = "";
 		save_game_component("PassPhrase", CURR_GAME_PASSWORD, "game_pass_phrase");
 		save_game_component("PublishedSheetURL", CURR_PUB_SHEET_URL, "game_url_value");
 		save_game_component("EditSheetURL", CURR_EDIT_SHEET_URL, "game_edit_sheet_value");
+		save_game_component("GameSettings", "", "settings_identifier");
 
 		setTimeout(function(){
 			save_button.disabled = false;
 			toggle_saving_gif(true);
 		}, 2000);
 	}
-
 
 	// Save an individual game component, based on passed in values
 	function save_game_component(componentName, currValue, fieldID)
@@ -387,10 +448,47 @@ var CURR_GAME_PASSWORD = "";
 					MyTrello.update_card_custom_field(CURR_GAME_ID,MyTrello.custom_field_edit_url,new_value);
 					CURR_EDIT_SHEET_URL = new_value;
 					break;
+				case "GameSettings":
+					saveGameSettings();
+					break;
 				default:
 					Logger.log("Saving Game Component: NO COMPONENT FOUND WITH NAME: " + componentName);
 					break;
 			}
+		}
+	}
+
+
+	function saveGameSettings()
+	{
+		try
+		{
+			// Get elements
+			let answering = document.getElementById("Answering Questions");
+			let selecting = document.getElementById("Selecting Questions");
+			let time = document.getElementById("Time to Answer Questions");
+			let wager = document.getElementById("Final Jeopardy Wager");
+
+			// Get values (or defaults);
+			let answering_value = mydoc.isValidValue(answering.value) ? answering.value : "Everybody Gets a Chance"
+			let selecting_value = mydoc.isValidValue(answering.value) ? selecting.value : "Everybody Gets a Chance";
+			let time_value = mydoc.isValidValue(answering.value) ? time.value : "15";
+			let wager_value = mydoc.isValidValue(answering.value) ? wager.value : "Max Wager is Highest Score";
+
+			Settings.currentSettings = [
+				{ "name": "Answering Questions", "value": answering_value},
+				{ "name": "Selecting Questions", "value": selecting_value},
+				{ "name": "Time to Answer Questions", "value": time_value },
+				{ "name": "Final Jeopardy Wager", "value": wager_value}
+			];
+			
+			// update to the rules given by the user
+			let settingsJSONString = JSON.stringify(Settings.currentSettings);
+			MyTrello.update_card_description(CURR_GAME_ID, settingsJSONString);
+		}
+		catch(error)
+		{
+			console.log(error);
 		}
 	}
 

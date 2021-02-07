@@ -13,8 +13,8 @@
 	{
 		"_daily_double_audio":"../assets/audio/daily_double.m4a",
 		"_daily_double_image":"../assets/img/daily_double.jpeg",
-
 	};
+
 	var QA_MAP = {};   //The Question-Answer map;
 	var IS_FINAL_JEOPARDY = false;
 	
@@ -127,9 +127,31 @@
 				GAME_NAME = response["name"];
 				let gameURL = response["desc"].trim();
 
-				// Load the attachments
+
 				load_attachments_from_trello();
-				load_game_from_google(gameURL);
+
+				// Load the game settings & rules
+				let gameSettings = Settings.GetSettings(myajax.GetJSON(response["desc"]));
+				let gameRules = Settings.GetRules();
+				console.log(Settings);
+				load_game_rules(gameRules);
+
+
+
+				// Get the published URL from the card custom field
+				MyTrello.get_card_custom_fields(CURR_GAME_ID, function(data2){
+					response2 = JSON.parse(data2.responseText);
+					response2.forEach(function(obj){
+						let valueObject = obj["value"];
+						let is_pub_url_field = obj["idCustomField"] == MyTrello.custom_field_pub_url;
+						let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+						
+						if(is_pub_url_field && value != "")
+						{
+							load_game_from_google(value);
+						}
+					});
+				});
 			});
 		}
 		catch(error)
@@ -137,6 +159,22 @@
 			set_loading_results("Sorry, something went wrong!\n\n"+error);
 		}
 	}
+
+	// Parse and load the game rules
+	function load_game_rules(rules=undefined)
+	{
+		try
+		{
+			formatRules(rules);
+		}
+		catch(error)
+		{
+			Logger.log(error);
+			set_loading_results("Sorry, something went wrong!\n\n"+error);
+
+		}
+	}
+
 
 	// Get the attachments on the card (if any)
 	function load_attachments_from_trello()
@@ -763,6 +801,35 @@
 			formatted = `<a class='answer_link' href=\"${value}\" target='_blank'>${value}</a>`;
 		}
 		return formatted;
+	}
+
+	function formatRules(rulesJSON)
+	{
+		console.log("RULES JSON");
+		console.log(rulesJSON);
+
+		if(rulesJSON != undefined && rulesJSON.length > 0)
+		{
+			rulesListItems = "";
+
+			rulesJSON.forEach(function(obj){
+				let rule = obj["rule"];
+				let subRules = obj["subRules"];
+
+				ruleElement = `<strong class='rule'>${rule}</strong>`
+				subeRulesElements = "";
+				
+				subRules.forEach(function(sub){
+					subeRulesElements += `<li class='subrule'>${sub}</li>`
+				});
+
+				// Create the overall rule item; Append to the list
+				rulesListItems += `<li class='rule_item'>${ruleElement}<ul>${subeRulesElements}</ul></li>`
+			});
+
+			// Set the rules
+			document.getElementById("rules_list").innerHTML = rulesListItems;
+		}
 	}
 
  /* GET */

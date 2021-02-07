@@ -127,6 +127,13 @@ const MyTrello = {
 		myajax.AJAX({ method: "PUT", path:trello_path, failure:Logger.errorHandler});
 	},
 
+	update_card_description: function(card_id, new_desc){
+		let obj = { "desc": new_desc };
+		var encoded = JSON.stringify(obj);
+		let trello_path = `${this.endpoint}/cards/${card_id}/?key=${this.key}&token=${this.token}`;
+		myajax.AJAX({ method: "PUT", path:trello_path, data:encoded, contentType:"JSON", failure:Logger.errorHandler});
+	},
+
 	update_card_name: function(card_id, new_name){
 		let param = `name=${new_name}`;
 		let trello_path = `${this.endpoint}/cards/${card_id}/?key=${this.key}&token=${this.token}&${param}`;
@@ -137,7 +144,7 @@ const MyTrello = {
 		// var obj = `{ "value":{ "text":"${new_value}" } }`;
 		var obj = { "value":{ "text":new_value } };
 		// var encoded = encodeURIComponent(obj);
-		var encoded = JSON.stringify(obj)
+		var encoded = JSON.stringify(obj);
 		let trello_path = `${this.endpoint}/cards/${card_id}/customField/${field_id}/item/?key=${this.key}&token=${this.token}`;
 		myajax.AJAX({ method: "PUT", path:trello_path, data:encoded, contentType:"JSON", failure:Logger.errorHandler});
 	},
