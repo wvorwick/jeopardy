@@ -13,6 +13,9 @@ function test_trello()
 		case "lists":
 			MyTrello.get_lists(print_data);
 			break;
+		case "labels":
+			MyTrello.get_labels(print_data);
+			break;
 		case "list-create":
 			MyTrello.create_list("Test Trello List", print_data);
 			break;

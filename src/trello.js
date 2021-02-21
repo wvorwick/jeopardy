@@ -50,6 +50,13 @@ const MyTrello = {
 		myajax.AJAX({ method: "POST", path:trello_path, data:"", success: successCallback, failure:Logger.errorHandler});
 	},
 
+	// Creates a new Trello Card
+	create_game_card: function(listID, team_name, successCallback){
+		let params = `name=${team_name}&idList=${listID}&pos=top&idLabels=5fdfd98086c6bc9cc56d4db3`;
+		let trello_path = `${this.endpoint}/cards/?key=${this.key}&token=${this.token}&${params}`
+		myajax.AJAX({ method: "POST", path:trello_path, data:"", success: successCallback, failure:Logger.errorHandler});
+	},
+
 	// Add a comment to a card
 	create_card_comment: function(card_id, comment){
 		let param = `text=${comment}`;
@@ -103,6 +110,12 @@ const MyTrello = {
 	get_card_custom_fields: function(card_id, successCallback){
 		let trello_path = `${this.endpoint}/cards/${card_id}/customFieldItems/?key=${this.key}&token=${this.token}`;
 		myajax.AJAX({ method: "GET", path:trello_path, success: successCallback, failure:Logger.errorHandler});
+	},
+
+	// Get Labels
+	get_labels: function(successCallback){
+		let trello_path = `${this.endpoint}/boards/${this.board_id}/labels?key=${this.key}&token=${this.token}`;
+		myajax.AJAX({ method: "GET", path : trello_path, success: successCallback, failure : Logger.errorHandler});
 	},
 
 	// Gets the set of Trello Lists

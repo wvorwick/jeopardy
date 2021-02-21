@@ -618,7 +618,7 @@ var USE_DEFAULT_RULES = true;
 	// Create the new game;
 	function create_game(game_name, pass_phrase)
 	{
-		MyTrello.create_card(MyTrello.admin_list_id, game_name, function(data)
+		MyTrello.create_game_card(MyTrello.admin_list_id, game_name, function(data)
 		{
 			response = JSON.parse(data.responseText);
 			game_id = response["id"];
