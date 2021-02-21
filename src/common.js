@@ -39,8 +39,63 @@ const Logger = {
 					console.log("ERROR");
 					console.log(err);
 				}
-
 }
+
+const Helper = {
+	_getRandomCharacter: function(){
+		characters = "abcdefghijklmnopqrstuvwxyz";
+		randChar = Math.floor(Math.random()*characters.length);
+		return characters[randChar].toUpperCase();
+	},
+
+	_isReservedCode: function(code){
+		var reserved = ["DEMO", "TEST"];
+		return reserved.includes(code.toUpperCase());
+	},
+
+	getCode: function(numChars=4){
+		let chars = "";
+
+		for(var idx = 0; idx < numChars; idx++)
+		{
+			chars += Helper._getRandomCharacter();
+		}
+
+		var code = ( Helper._isReservedCode(chars) ) ? Helper.getCode() : chars;
+		return code;
+	},
+
+	getDate: function(){
+		let dd = new Date();
+		let year = dd.getFullYear().toString();
+		let monthIdx = dd.getMonth()+1;
+		let month = (monthIdx<9) ? "0"+monthIdx : monthIdx;
+		let dayIdx = dd.getDate();
+		let day = (dayIdx < 9 ) ? "0"+dayIdx : dayIdx;
+		var myDateObj = { "year":year, "month":month, "day":day };
+		return myDateObj;
+	},
+
+	getDateFormatted: function(format=undefined){
+		let date = Helper.getDate();
+		let year = date["year"];
+		let month = date["month"];
+		let day = date["day"];
+
+		let dateFormatted = `${year}-${month}-${day}`;
+		switch(format)
+		{
+			case "yyyy/mm/dd":
+				dateFormatted = `${year}/${month}/${day}`;
+				break;
+			default:
+				dateFormatted = `${year}-${month}-${day}`;
+				break;
+		}
+		return dateFormatted
+	}
+}
+
 
 const mydoc = {
 
@@ -130,6 +185,7 @@ const mydoc = {
 		}
 	}
 };
+
 const myajax = { 
 	
 	GetContentType: function(type){

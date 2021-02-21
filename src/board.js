@@ -8,10 +8,9 @@ var CURR_GAME_CODE = "";
 var GAME_NAME  = "Home-made Jeopardy";
 var HOW_TO_IS_HIDDEN = true;
 
-var GAME_MEDIA = 
-{
-"_daily_double_audio":"../assets/audio/daily_double.m4a",
-"_daily_double_image":"../assets/img/daily_double.jpeg",
+var GAME_MEDIA = {
+	"_daily_double_audio":"../assets/audio/daily_double.m4a",
+	"_daily_double_image":"../assets/img/daily_double.jpeg",
 };
 
 var QA_MAP = {};   //The Question-Answer map;
@@ -115,6 +114,7 @@ function load_game_from_trello()
 {
 	// Clear loading results
 	set_loading_results("");
+
 	// Show the loading section
 	toggle_loading_gif();
 
@@ -130,16 +130,17 @@ function load_game_from_trello()
 			GAME_NAME = response["name"];
 			let gameURL = response["desc"].trim();
 
-
+			//Load the Attachments on the Game (if any);
 			load_attachments_from_trello();
+
+			// Determine if the How To button should display
+			showHowToPlayButton();
 
 			// Load the game settings & rules
 			let gameSettings = Settings.GetSettings(myajax.GetJSON(response["desc"]));
 			let gameRules = Settings.GetRules();
 			console.log(Settings);
 			load_game_rules(gameRules);
-
-			showHowToPlayButton();
 
 			// Get the published URL from the card custom field
 			MyTrello.get_card_custom_fields(CURR_GAME_ID, function(data2){
@@ -326,7 +327,8 @@ function initialize_game()
 	addListenerQuestionClick();
 
 	// Set the game code
-	let game_code = getGameCode();
+	// let game_code = getGameCode();
+	let game_code = (IS_TEST_RUN) ? "TEST" : (IS_DEMO_RUN) ? "DEMO" : Helper.getCode();
 	CURR_GAME_CODE = game_code;
 	document.getElementById("game_code").innerHTML = game_code;
 
@@ -413,7 +415,9 @@ function onEndGame()
 	if(confirmAction && !IS_TEST_RUN && !IS_DEMO_RUN)
 	{
 		// Set the list to archived; With updated name;
-		MyTrello.update_list_to_archive(CURR_LIST_ID, `${CURR_GAME_CODE} - ${GAME_NAME}` , function(){
+		let dateCode = Helper.getDateFormatted();
+		let archive_name = `${dateCode} - ${CURR_GAME_CODE} - ${GAME_NAME}`;
+		MyTrello.update_list_to_archive(CURR_LIST_ID, archive_name , function(){
 			alert("Game archived!");
 			mydoc.hideContent("#endGameButton");
 			mydoc.hideContent("#game_board_section");
@@ -479,6 +483,15 @@ function onStartGame(event)
 	mydoc.showContent("#teams_sync_section");
 	mydoc.showContent("#round_1_row");
 	mydoc.showContent("#finalJeopardyButton");
+
+	// Set a comment indicating the game is being played
+	if(!IS_TEST_RUN && !IS_DEMO_RUN)
+	{
+		let date = Helper.getDateFormatted();
+		let comment = `${date} --> ${CURR_GAME_CODE}`;
+		console.log(comment);
+		MyTrello.create_card_comment(CURR_GAME_ID, comment);
+	}
 
 	// Only used if multiple rounds are set;
 	let nextRound = document.getElementById("next_round");
@@ -1027,12 +1040,15 @@ function loadTeamNamesInCorrectAnswerBlock()
 /* RESET */
 function resetAnswers()
 {
-	Logger.log("Clearing Answers!");
-	let teams = Array.from(document.querySelectorAll(".team_name"));
-	teams.forEach(function(obj){
-		card_id = obj.getAttribute("data-jpd-team-code");
-		MyTrello.update_card(card_id, "");
-	});
+	Logger.log("Clearing Answers in 5 seconds!");
+	setTimeout(function(){
+		let teams = Array.from(document.querySelectorAll(".team_name"));
+		teams.forEach(function(obj){
+			card_id = obj.getAttribute("data-jpd-team-code");
+			MyTrello.update_card(card_id, "");
+		});
+	}, 5000)
+	
 }
 
 /* SET */ 
