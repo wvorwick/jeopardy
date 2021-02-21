@@ -107,7 +107,8 @@ const MyTrello = {
 
 	// Gets the set of Trello Lists
 	get_lists: function(successCallback){
-		let trello_path = `${this.endpoint}/boards/${this.board_id}/lists?key=${this.key}&token=${this.token}`;
+		let param="filter=open";
+		let trello_path = `${this.endpoint}/boards/${this.board_id}/lists?key=${this.key}&token=${this.token}&${param}`;
 		myajax.AJAX({ method: "GET", path:trello_path, success: successCallback, failure:Logger.errorHandler});
 	},
 

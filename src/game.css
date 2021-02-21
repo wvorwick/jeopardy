@@ -1,7 +1,12 @@
+/* HOW TO PLAY */
+
+	.how_to_play_section { background-color:red;color:white; text-align:center; }
+	.how_to_play_section .instruction { font-size:150%; }
 
 /* GENERAL */
 	body{ margin:0px; padding:0px; background-color:black; color:#F5F5F5; }
 	.hidden { display:none; }
+	.invisible { visibility: hidden; }
 	#home_button button { background-color:black; color:gray; }
 	.header { font-size:50px !important; }
 	.centered{ text-align:center;  }
@@ -97,6 +102,7 @@
 
 /* TEAMS SECTION */
 	.teams_icons { cursor:pointer; }
+	#teams_sync_section { width:50%;margin:auto; }
 	#teams_table { width:60%; margin:auto; border-spacing:0px; text-align:left; }
 	#teams_table tr th { background-color:#060CE9; color:#F5F5F5; }
 	#teams_table tbody tr td{ border-bottom:2px solid white; border-top:2px solid white; }

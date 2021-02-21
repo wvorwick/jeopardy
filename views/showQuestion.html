@@ -1,14 +1,25 @@
 <div>
 	
-	<span id="close_question_view" onclick="onCloseQuestion()">CLOSE</span>
+	<span id="close_question_view" onclick="onCloseQuestion()">
+		CLOSE
+		<br/>
+		<span class="how_to_play_section hidden">
+			Click this to close the question popup, or use the ESC key on your keyboard.
+		</span>
+	</span>
 	<div id="question_block"></div>
 	<h2>Value = <span id="value_block"></span></h2>
 	<button id="revealAnswerButton" onclick="onRevealAnswer();">Reveal Answer</button><br/><br/>
 	<div id="answer_block" class="hidden"></div>
 
 	<div id="correct_block" class="hidden">
+		
 		<div>
 			<h2>Who Got It Right?</h2>
+			<p class=" how_to_play_section hidden instruction center_section_50">
+				This section shows the list of teams &amp; their answers. <br/>
+				Select who got it right, and when you close the popup, the points will be applied to their score.
+			</p>
 			<table>
 				<thead>
 					<tr>
