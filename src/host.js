@@ -31,7 +31,15 @@ var USE_DEFAULT_RULES = true;
 			else 
 			{
 				mydoc.showContent("#enter_game_name_section");
+				loadListOfGames();
 			}
+		}
+
+		// If loading the game, 
+		if (path.includes("/host/load"))
+		{
+			loadListOfGames();
+
 		}
 
 		// If gameid is set, avoid accidentally exiting
@@ -49,46 +57,25 @@ var USE_DEFAULT_RULES = true;
 		event.returnValue='';
 	}
 
-
-/*********************************************************************************
-	HOST: PLAY EXISTING GAME (to play)
-**********************************************************************************/ 
-	
-	function load_game_from_trello(isTestRun=false)
+	function loadListOfGames()
 	{
-
-		let test_param = (isTestRun) ? "&test=1" : "";
-
-		// Clear loading results
-		set_loading_results("");
-		// Show the loading section
-		toggle_loading_gif();
-
 		try
 		{
-			let game_name_ele = document.getElementById("game_name_to_load");
-			let given_game_name = game_name_ele.value;
-			
+			let games_select_list = document.getElementById("list_of_games");
 			MyTrello.get_cards(MyTrello.admin_list_id, function(data){
 				response = JSON.parse(data.responseText);
+
+				let options = "";
 
 				let game_id    = undefined;
 				response.forEach(function(card){
 					let card_name = card["name"];
 					let card_id   = card["id"];
 
-					if(card_name.toLowerCase() == given_game_name.toLowerCase())
-					{
-						game_id = card_id
-					}
+					options += `<option value=${card_id}>${card_name}</option>`;
 				});
 				
-				if(game_id != undefined)
-				{
-					let path = "/board/?gameid=" + game_id + test_param;
-					let href = "http://" + location.host + location.pathname.replace("/host/play.html",path);
-					location.replace(href);
-				}
+				games_select_list.innerHTML += options;
 			});
 		}
 		catch(error)
@@ -96,55 +83,64 @@ var USE_DEFAULT_RULES = true;
 			set_loading_results("Sorry, something went wrong!\n\n"+error);
 		}
 	}
-	
+
+
 /*********************************************************************************
-	HOST: ENTER DETAILS TO EXISTING GAME
+	HOST: LOAD GAME (to either PLAY or EDIT)
 **********************************************************************************/ 
 
-	// Looks up the lists from the board and tries to find the one matching the given game code
-	function load_game()
+	// Get the selected game and entered pass phrase
+	function getGameAndPassPhrase()
 	{
-		// Start Clear results if any & load GIF
-		set_loading_results("");
-		toggle_loading_gif();
-
-		let game_name_ele = document.getElementById("given_game_name");
-		let given_name = game_name_ele.value;
+		let list_of_games = document.getElementById("list_of_games");
+		let current_game_id = list_of_games.value; 
 
 		let game_password_ele = document.getElementById("given_game_password");
 		let given_password = game_password_ele.value;
 
-		MyTrello.get_cards(MyTrello.admin_list_id, function(data)
+		let obj = {"game_id": current_game_id, "pass_phrase": given_password}
+
+		return obj;
+	}
+
+	// Looks up the lists from the board and tries to find the one matching the given game code
+	function loadGame(action, isTestRun=false)
+	{
+
+		// Determine if this is a test game;
+		let test_param = (isTestRun) ? "&test=1" : "";
+
+		// Start Clear results if any & load GIF
+		set_loading_results("");
+		toggle_loading_gif();
+
+		let credentials = getGameAndPassPhrase()
+		let current_game_id = credentials["game_id"];
+		let given_password = credentials["pass_phrase"];
+
+		if (current_game_id != undefined)
 		{
-			let matching_game_id = undefined;
-			response = JSON.parse(data.responseText);
+			// Set the option for new paths; 
+			let playPath = "/board/?gameid=" + current_game_id + test_param;
+			let editPath = "/host/edit.html?gameid=" + current_game_id;
 
-			response.forEach(function(obj)
-			{
-				let game_name = obj["name"];
-				if(game_name.toUpperCase() == given_name.toUpperCase())
-				{
-					matching_game_id = obj["id"];
-				}
+			// Set up the new based on action path
+			let newPath = (action == "play") ? 
+						location.pathname.replace("/host/load.html", playPath) 
+						: location.pathname.replace("/host/load.html", editPath);
+			// Set the new URL
+			let newURL = "http://" + location.host + newPath;
+
+			CURR_GAME_ID = current_game_id;
+			validate_password(current_game_id, given_password, function(){
+				location.replace(newURL);
 			});
-
-			if (matching_game_id != undefined)
-			{
-
-				CURR_GAME_ID = matching_game_id;
-				validate_password(matching_game_id,given_password, function(){
-					load_url = "http://" + location.host + location.pathname + "?gameid=" + CURR_GAME_ID;
-					location.replace(load_url);
-				});
-			}
-			else 
-			{
-				// toggle_loading_gif(true);
-				result = "Could not find a game with the given name!";
-				set_loading_results(result);
-				// document.getElementById("loading_results_section").innerText = result;
-			}
-		});
+		}
+		else 
+		{
+			result = "Could not find a game with the given name!";
+			set_loading_results(result);
+		}
 	}
 
 
@@ -159,15 +155,16 @@ var USE_DEFAULT_RULES = true;
 			response.forEach(function(obj){
 				let valueObject = obj["value"];
 				let is_phrase_field = obj["idCustomField"] == MyTrello.custom_field_phrase;
-				let value = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
+				let is_edit_field = obj["idCustomField"] == MyTrello.custom_field_edit_url;
+				let customFieldValue = (valueObject.hasOwnProperty("text")) ? valueObject["text"] : "";
 				
-				if(is_phrase_field && value != "")
+				if( (is_phrase_field || is_edit_field) && customFieldValue != "")
 				{
-					if(value.toUpperCase() == password.toUpperCase())
-						{
-							failure = false;
-							callback();
-						}
+					if(customFieldValue.toUpperCase() == password.toUpperCase())
+					{
+						failure = false;
+						callback();
+					}
 				}
 			});
 			if(failure)

@@ -148,6 +148,16 @@ const mydoc = {
 		return isValid;
 	},
 
+	get_query_param: function(key){
+		let map = this.get_query_map();
+		let value = undefined;
+		if(map.hasOwnProperty(key))
+		{
+			value = map[key]
+		}
+		return value;
+	},
+
 	get_query_map: function(){
 		let query_string = location.search;
 		let query = query_string.replace("?", "")

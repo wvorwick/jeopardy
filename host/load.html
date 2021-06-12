@@ -13,7 +13,9 @@
 <body>
 
 	<div id="homemade_jeopardy_title" class="centered">
-		<h1 id="homemade_jeopardy_title">Homemade Jeopardy<br/>Play Game</h1>
+		<h1 id="homemade_jeopardy_title">
+			Homemade Jeopardy<br/>Load Game
+		</h1>
 		<a id="home_button" href="../host/">
       		<button class="fa fa-caret-square-o-left">&nbsp;Back</button>
       	</a>
@@ -22,23 +24,31 @@
 
 	<div id="enter_game_name_section">
 		<div class="center_section_50 centered">
-			<h2>Game Name:</h2>
-			<p>Use this page to load a home-made Jeopardy game. Just enter the game name &amp; play!</p>
-			<input id="game_name_to_load" type="text" name="game_name" placeholder="Enter the name of the game you want to play" class="input_mash">
-			<div style="margin-top:2%;">
-				<!-- <button id="load_test_game_button" class="button_mash" onclick="load_game_from_trello(true)">
-					TEST RUN GAME
-				</button>
-				<br/><br/> -->
-				<button id="load_game_button" class="button_mash" onclick="load_game_from_trello()">
-					PLAY GAME
-				</button>
-				<a id="hidden_link" href="" target="_blank"></a>
-			</div>
-			<br/>
+			<h2>Select a Game:</h2>
+			<select id="list_of_games" name="game_name2" class="input_mash">
+				<option value=""></option>
+			</select>
+			<br/><br/>
+
+			<h2>Enter Pass Phrase:</h2>
+			<input id="given_game_password" type="text" name="game_password" placeholder="Enter game password" class="input_mash"> <br/>
+			<span style="font-style:italic;">If you forget the pass phrase, you can paste the full edit URL instead. <br/> If it matches the one for the game, it will load.</span>
+
+			<br/><br/>
+
+			<button id="edit_game_button" class="button_mash test_button" onclick="loadGame('edit')" >
+				EDIT GAME
+			</button>
+			<button id="play_game_button" class="button_mash play_button" onclick="loadGame('play')">
+				PLAY GAME
+			</button>
+			<br/><br/>
+
 			<img id="loading_gif" class="hidden" src="../assets/img/loading1.gif" class="hidden" style="width:100px;height:100px;">
-			<p id="loading_results_section"></p>
 		</div>
+	</div>
+	<div class="center_section_50 centered">
+		<p id="loading_results_section"></p>
 	</div>
 </body>
 	<!-- Common Code -->
