@@ -134,7 +134,7 @@
 		font-size:64px; 
 		cursor:pointer; 
 		border: 3px solid oldlace;
-		border-radius: 6rem;
+		border-radius: 0.5rem;
 	}
 	.category_column { width:100%; }
 	.category_title { color:#F5F5F5; font-size:25px; height:100px;}
