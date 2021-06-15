@@ -43,7 +43,7 @@
 	.pointer { cursor:pointer }
 
 	.save_button {
-		border-style: solid;
+		border-style: solid 1px;
 		border: oldlace;
 		border-radius: 20px;
 		padding-left: 2rem;
