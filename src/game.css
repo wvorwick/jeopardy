@@ -25,7 +25,10 @@
 	.hyperlink { background-color:blue; color:white;}
 
 	.jeopardy_image{ max-width:95%; }
-	#homemade_jeopardy_title { text-decoration:none; }
+	#homemade_jeopardy_title { 
+		text-decoration:none; 
+		font-family: degular-display;
+	}
 
 
 /* HOME PAGE */
