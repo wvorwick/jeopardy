@@ -42,7 +42,7 @@
 	.input_mash { width:80%; font-size:140%; text-align:center;  }
 	.pointer { cursor:pointer }
 
-	.save_button {
+	.savetestplay_button {
 		border: 2px solid oldlace;
 		border-radius: 20px;
 		background-color: transparent;
