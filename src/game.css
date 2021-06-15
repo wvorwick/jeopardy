@@ -8,7 +8,8 @@
 		margin:0px; 
 		padding:0px; 
 		background-color:black; 
-		color:#F5F5F5; }
+		color:#F5F5F5; 
+		font-family: degular-display;}
 	.gradient {
 		color: inherit;
 		background-image: linear-gradient(
