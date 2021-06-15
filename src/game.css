@@ -27,7 +27,7 @@
 	.jeopardy_image{ max-width:95%; }
 	#homemade_jeopardy_title { 
 		text-decoration:none; 
-		font-family: degular-display;
+		font-family: degular-display, sans-serif;
 	}
 
 
