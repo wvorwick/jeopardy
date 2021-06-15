@@ -129,7 +129,12 @@
 
 /* GAME BOARD */
 	#game_board { width:100%;margin-bottom:3%; }
-	.category { background-color:#060CE9; font-size:64px; cursor:pointer; }
+	.category { 
+		background-color:transparent; 
+		font-size:64px; 
+		cursor:pointer; 
+		border: 3px solid oldlace;
+	}
 	.category_column { width:100%; }
 	.category_title { color:#F5F5F5; font-size:25px; height:100px;}
 	.category_option { color:yellow; text-align:center; font-weight:bolder; cursor:pointer;}
