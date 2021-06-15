@@ -9,7 +9,8 @@
 		padding:0px; 
 		background-color:black; 
 		color:#F5F5F5; 
-		font-family: degular-display;}
+		font-family: degular-display;
+	}
 	.gradient {
 		color: inherit;
 		background-image: radial-gradient(
@@ -41,10 +42,23 @@
 	.input_mash { width:80%; font-size:140%; text-align:center;  }
 	.pointer { cursor:pointer }
 
-	.save_button { background-color:limegreen; color:black; }
-	.test_button { background-color:orange; color:black; }
-	.play_button { background-color:#060CE9; color:yellow;}
-	.hyperlink { background-color:blue; color:white;}
+	.save_button {
+		background-color:limegreen; 
+		border-radius: 20px;
+		color:black; 
+	}
+	.test_button {
+		background-color:orange; 
+		color:black; 
+	}
+	.play_button { 
+		background-color:#060CE9; 
+		color:yellow;
+	}
+	.hyperlink { 
+		background-color:blue; 
+		color:white;
+	}
 
 	.jeopardy_image{ max-width:95%; }
 	#homemade_jeopardy_title { 
