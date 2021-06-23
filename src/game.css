@@ -28,7 +28,7 @@
 		  linear-gradient(262deg, #3acde3 49%, rgba(255, 255, 255, 0) 70%);
 	}
 	.vh100{
-		height: 100vh;
+		height: 20px;
 	}
 	.hidden { display:none; }
 	.invisible { visibility: hidden; }
