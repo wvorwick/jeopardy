@@ -101,7 +101,7 @@
 	}
 	#player{
 		width: 32rem;
-		height: 12rem;
+		height: 8rem;
 	}
 	.identify_yourself:hover{background-color:oldlace; color:#202527; }
 	.left-align{
