@@ -79,9 +79,9 @@
 	.identify_yourself {
 		display:block; 
 		text-align:center; 
-		padding:2%; 
+		padding:auto; 
 		width:20rem; 
-		height: 5rem;
+		height: 6rem;
 		margin:auto; 
 		cursor:pointer;
 		background-color:transparent; 
