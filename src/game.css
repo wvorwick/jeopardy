@@ -89,7 +89,7 @@
 		border-radius: 50%;
 	}
 		
-	.identify_yourself:hover{background-color:blue; color:yellow; }
+	.identify_yourself:hover{background-color:oldlace; color:inherit; }
 	.left-align{
 		text-align: left;
 	}
