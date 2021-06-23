@@ -28,16 +28,16 @@
 			<h2 class="homepage-heading">step 1: enter game code</h2>
 			<input id="player_game_code" type="text" name="player_game_code" class="gay-input">
 			<br/><br/>
-			<button type="submit" value="Enter" class="button_mash identify_yourself" id="submit" onclick="lookup_game()">
+			<button type="submit" value="Enter" class="button_mash identify_yourself" id="team-button" onclick="lookup_game()">
 				<h4>submit</h4>
 			</button>
 		</div>
 
 		<div id="enter_team_name_section" class="hidden">
 			<h2>Step 2: Enter Team Name</h2>
-			<input id="team_name" type="text" name="team_name">
+			<input id="team_name" type="text" name="team_name" class="gay-input">
 			<br/><br/>
-			<button id="create_team_button" type="submit" value="Enter" class="button_mash" onclick="create_team()">
+			<button id="create_team_button team-button" type="submit" value="Enter" class="button_mash" onclick="create_team()">
 				Create Team
 			</button><br/>
 			<img id="loading_gif" class="hidden" src="../assets/img/loading1.gif" class="hidden">
