@@ -195,7 +195,6 @@
 	#rules_section h1 { text-align: center; }
 	#rules_section .rule_item { margin-bottom:5%; font-size:120%;}
 
-
 /* MAIN VIEW */
 	#main_view_section { padding-left:1%; padding-right:1%; display:relative; }
 	#loading_results_section {padding:2%; font-size:200%; color:red;}
