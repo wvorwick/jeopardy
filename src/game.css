@@ -88,6 +88,7 @@
 		border: 3px solid oldlace;
 		border-radius: 50%;
 		color: oldlace;
+		text-decoration: none;
 	}
 		
 	.identify_yourself:hover{background-color:oldlace; color:#202527; }
