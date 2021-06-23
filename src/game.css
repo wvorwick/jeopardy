@@ -105,7 +105,7 @@
 		position: relative;
 		left: 14.5rem;
 	}
-	.identify_yourself:hover{background-color:oldlace; color: invert; }
+	.identify_yourself:hover{background-color:oldlace; color: #202527; }
 	.left-align{
 		text-align: left;
 	}
