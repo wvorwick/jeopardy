@@ -90,6 +90,9 @@
 	}
 		
 	.identify_yourself:hover{background-color:blue; color:yellow; }
+	.left-align{
+		text-align: left;
+	}
 
 /* ANSWERS PAGE*/
 	#team_code { color:orange; }
