@@ -106,6 +106,10 @@
 		left: 14.5rem;
 	}
 	.identify_yourself:hover{background-color:oldlace; color: #202527; }
+	#no-border{
+		border: none;
+		background-color: transparent;
+	}
 	.left-align{
 		text-align: left;
 	}
