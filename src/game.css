@@ -106,10 +106,18 @@
 		left: 14.5rem;
 	}
 	.identify_yourself:hover{background-color:oldlace; color: #202527; }
-	#no-border{
-		border: none;
-		background-color: transparent;
+
+	.what-do {
+		margin-bottom: 2rem; 
+		cursor:pointer;
+		margin-bottom:2%; 
+		color: oldlace;
+		text-decoration: none;
 	}
+	.what-do:hover{
+		color: #202527; 
+	}
+
 	.left-align{
 		text-align: left;
 	}
