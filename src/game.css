@@ -79,7 +79,7 @@
 	.identify_yourself {
 		display:flex; 
 		text-align:center; 
-		justify-content: center;
+		align-items: center;
 		width:20rem; 
 		height: 6rem;
 		margin:auto; 
