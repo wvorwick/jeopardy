@@ -127,7 +127,7 @@
 	#submit{
 		width: 24rem;
 		height: 7.5rem;
-		justify-self: right;
+		float: right;
 	}
 	.identify_yourself:hover{background-color:oldlace; color: #202527; }
 
@@ -174,8 +174,8 @@
 	}
 
 /* ANSWERS PAGE*/
-	#team_code { color:orange; }
-	#game_code { color:orange; }
+	#team_code { color:oldlace; }
+	#game_code { color:oldlace; }
 	.submitted_answer{ color:limegreen; }
 	#final_jeopardy_button { float:right; }
 	#final_jeopardy_block { margin-top:1%; margin-bottom:1%; }
