@@ -127,8 +127,7 @@
 	#submit{
 		width: 24rem;
 		height: 7.5rem;
-		position: relative;
-		right: 0;
+		justify-self: right;
 	}
 	.identify_yourself:hover{background-color:oldlace; color: #202527; }
 
