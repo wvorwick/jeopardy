@@ -82,8 +82,7 @@
 	}
 	.gay-input{
 		background-color: transparent;
-		border: 3px solid oldlace;
-		border-radius: 50%;
+		border-bottom: 3px solid oldlace;
 		color: #202527;
 		width: 30%;
 	}
