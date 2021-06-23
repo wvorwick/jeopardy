@@ -105,20 +105,7 @@
 		position: relative;
 		left: 14.5rem;
 	}
-	.identify_yourself:hover{background-color:oldlace; color:radial-gradient(
-		circle at -70% -35%,
-		#edf110,
-		hsla(0, 0%, 100%, 0) 20%
-	  ),
-	  linear-gradient(141deg, #ff8a3e 0%, hsla(180, 100%, 25%, 0) 100%),
-	  linear-gradient(181deg, #00ff5e 1%, rgba(255, 255, 255, 0) 55%),
-	  radial-gradient(
-		circle at -65% -104%,
-		#7234db 38%,
-		rgba(255, 255, 255, 0) 86%
-	  ),
-	  linear-gradient(83deg, #4234f2 40%, rgba(255, 255, 255, 0) 100%),
-	  linear-gradient(262deg, #3acde3 49%, rgba(255, 255, 255, 0) 70%); }
+	.identify_yourself:hover{background-color:oldlace; color: invert; }
 	.left-align{
 		text-align: left;
 	}
