@@ -93,6 +93,9 @@
 	.left-align{
 		text-align: left;
 	}
+	#home-page-heading{
+		size: 4rem;
+	}
 
 /* ANSWERS PAGE*/
 	#team_code { color:orange; }
