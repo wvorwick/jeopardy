@@ -31,7 +31,7 @@
 		min-height: 100vh;
 	}
 	.vw50{
-		width: 50vw;
+		width: 22rem;
 		margin: auto;
 	}
 	.hidden { display:none; }
@@ -86,7 +86,7 @@
 		align-items: center;
 		justify-content: center;
 		width:22rem; 
-		height: 7rem;
+		height: 6rem;
 		margin:auto; 
 		cursor:pointer;
 		background-color:transparent; 
