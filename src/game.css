@@ -108,6 +108,10 @@
 		position: relative;
 		left: 14.5rem;
 	}
+	#submit{
+		width: 24rem;
+		height: 7.5rem;
+	}
 	.identify_yourself:hover{background-color:oldlace; color: #202527; }
 
 	.what-do {
