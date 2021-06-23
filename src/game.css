@@ -10,6 +10,9 @@
 		color: oldlace; 
 		font-family: degular-text;
 	}
+	button{
+		font-family: degular-text;
+	}
 	.gradient {
 		color: oldlace;
 		background-image: radial-gradient(
