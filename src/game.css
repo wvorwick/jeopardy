@@ -76,8 +76,18 @@
 /* HOME PAGE */
 	#main_section { width:80%; margin:auto; text-align:center; font-size:120%; }
 	#main_section input {width:80%; font-size:140%; text-align:center; }
-	.identify_yourself { display:block; text-align:center; padding:2%; width:40%; margin:auto; cursor:pointer;
-							 background-color:lightgray; margin-bottom:2%; }
+	.identify_yourself {
+		display:block; 
+		text-align:center; 
+		padding:2%; 
+		width:40%; 
+		margin:auto; 
+		cursor:pointer;
+		background-color:transparent; 
+		margin-bottom:2%; 
+		border: 2px solid oldlace;
+	}
+		
 	.identify_yourself:hover{background-color:blue; color:yellow; }
 
 /* ANSWERS PAGE*/
