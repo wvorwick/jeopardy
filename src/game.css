@@ -85,8 +85,8 @@
 		cursor:pointer;
 		background-color:transparent; 
 		margin-bottom:2%; 
-		border: 2px solid oldlace;
-		border-radius: 20%;
+		border: 5px solid oldlace;
+		border-radius: 50%;
 	}
 		
 	.identify_yourself:hover{background-color:blue; color:yellow; }
