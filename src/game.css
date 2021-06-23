@@ -31,7 +31,7 @@
 		min-height: 100vh;
 	}
 	.vw50{
-		width: 22rem;
+		width: 50vw;
 		margin: auto;
 	}
 	.hidden { display:none; }
