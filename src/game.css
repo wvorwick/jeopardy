@@ -90,6 +90,10 @@
 		width: 30%;
 	}
 
+.gay-input, select, text{
+	color: oldlace;
+}
+
 
 /* HOME PAGE */
 	#main_section { width:80%; margin:auto; text-align:center; font-size:120%; }
