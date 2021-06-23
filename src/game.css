@@ -117,7 +117,14 @@
 	.what-do:hover{
 		color: #202527; 
 	}
-
+	#load{
+		position: relative;
+		left: 14.5rem;
+	}
+	#create{
+		position: relative;
+		left: 8rem;
+	}
 	.left-align{
 		text-align: left;
 	}
