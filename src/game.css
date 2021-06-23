@@ -97,6 +97,11 @@
 		font-size: 4rem;
 		text-align: left;
 	}
+	h4.homepage-button{
+		font-size: 2rem;
+		text-decoration: none;
+		color: oldlace;
+	}
 
 /* ANSWERS PAGE*/
 	#team_code { color:orange; }
