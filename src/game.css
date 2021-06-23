@@ -69,6 +69,7 @@
 	.hyperlink { 
 		background-color:blue; 
 		color:white;
+		align-content: left;
 	}
 
 	.jeopardy_image{ max-width:95%; }
