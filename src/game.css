@@ -97,17 +97,22 @@
 		color: oldlace;
 		text-decoration: none;
 	}
-		
+	#host{
+		width: 24rem;
+	}
+	#player{
+		width: 29rem;
+	}
 	.identify_yourself:hover{background-color:oldlace; color:#202527; }
 	.left-align{
 		text-align: left;
 	}
 	h2.homepage-heading{
-		font-size: 3rem;
+		font-size: 4rem;
 		text-align: left;
 	}
 	.identify_yourself h4{
-		font-size: 3rem;
+		font-size: 4rem;
 		text-decoration: none;
 		margin-block-start: 0;
     	margin-block-end: 0;
