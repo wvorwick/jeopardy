@@ -32,6 +32,7 @@
 	}
 	.vw50{
 		width: 50vh;
+		margin: auto;
 	}
 	.hidden { display:none; }
 	.invisible { visibility: hidden; }
