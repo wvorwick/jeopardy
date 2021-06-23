@@ -30,6 +30,9 @@
 	.vh100{
 		min-height: 100vh;
 	}
+	.vw60{
+		max-width: 50vh;
+	}
 	.hidden { display:none; }
 	.invisible { visibility: hidden; }
 	#home_button button { 
