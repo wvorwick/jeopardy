@@ -86,8 +86,6 @@
 		text-align:center; 
 		align-items: center;
 		justify-content: center;
-		width:24rem; 
-		height: 7.5rem;
 		margin:auto; 
 		cursor:pointer;
 		background-color:transparent; 
@@ -99,9 +97,11 @@
 	}
 	#host{
 		width: 24rem;
+		height: 7.5rem;
 	}
 	#player{
 		width: 29rem;
+		height: 8.5rem;
 	}
 	.identify_yourself:hover{background-color:oldlace; color:#202527; }
 	.left-align{
